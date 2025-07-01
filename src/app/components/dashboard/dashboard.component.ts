@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -7,6 +7,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { Goal, Category, Progress } from '../../goal.model';
+import { GoalService } from '../../services/goal.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -26,6 +28,9 @@ import { Goal, Category, Progress } from '../../goal.model';
             <p class="app-subtitle">Transform your dreams into achievements</p>
           </div>
           <nav class="nav">
+            <button mat-icon-button class="nav-btn" aria-label="Analytics" (click)="navigateToAnalytics()">
+              <mat-icon>analytics</mat-icon>
+            </button>
             <button mat-icon-button class="nav-btn" aria-label="Notifications">
               <mat-icon>notifications</mat-icon>
             </button>
@@ -98,6 +103,14 @@ import { Goal, Category, Progress } from '../../goal.model';
                 <div class="stat-value">78%</div>
                 <div class="stat-label">Overall Progress</div>
                 <div class="stat-trend positive">+12% this week</div>
+              </div>
+            </mat-card>
+            <mat-card class="stat-card stat-analytics" (click)="navigateToAnalytics()">
+              <div class="stat-icon">📊</div>
+              <div class="stat-content">
+                <div class="stat-value">View</div>
+                <div class="stat-label">Analytics</div>
+                <div class="stat-trend positive">Detailed insights</div>
               </div>
             </mat-card>
           </div>
@@ -203,70 +216,29 @@ import { Goal, Category, Progress } from '../../goal.model';
     </div>
   `
 })
-export class DashboardComponent {
-  constructor(private router: Router) {}
-  
-  goals: Goal[] = [
-    {
-      id: '1',
-      title: 'Run 5km 3x/week',
-      category: 'Health',
-      progress: { percent: 70 },
-      nextMilestone: 'Complete 2 more runs',
-      milestones: [
-        { id: '1', title: 'Run 5km once', completed: true },
-        { id: '2', title: 'Run 5km twice', completed: true },
-        { id: '3', title: 'Run 5km 3 times', completed: false },
-        { id: '4', title: 'Maintain for 4 weeks', completed: false }
-      ]
-    },
-    {
-      id: '2',
-      title: 'Read 12 books',
-      category: 'Personal',
-      progress: { percent: 50 },
-      nextMilestone: 'Finish "Atomic Habits"',
-      milestones: [
-        { id: '1', title: 'Read 3 books', completed: true },
-        { id: '2', title: 'Read 6 books', completed: true },
-        { id: '3', title: 'Read 9 books', completed: false },
-        { id: '4', title: 'Read 12 books', completed: false }
-      ]
-    },
-    {
-      id: '3',
-      title: 'Save $5,000',
-      category: 'Financial',
-      progress: { percent: 40 },
-      nextMilestone: 'Reach $2,000 saved',
-      milestones: [
-        { id: '1', title: 'Save $1,000', completed: true },
-        { id: '2', title: 'Save $2,000', completed: false },
-        { id: '3', title: 'Save $3,500', completed: false },
-        { id: '4', title: 'Save $5,000', completed: false }
-      ]
-    },
-    {
-      id: '4',
-      title: 'Get a promotion',
-      category: 'Career',
-      progress: { percent: 20 },
-      nextMilestone: 'Complete leadership course',
-      milestones: [
-        { id: '1', title: 'Complete leadership course', completed: false },
-        { id: '2', title: 'Update resume', completed: false },
-        { id: '3', title: 'Apply for positions', completed: false },
-        { id: '4', title: 'Get promoted', completed: false }
-      ]
-    }
-  ];
+export class DashboardComponent implements OnInit, OnDestroy {
+  private goalsSubscription: Subscription;
+  private recentActivitySubscription: Subscription;
 
-  recentActivity: string[] = [
-    'Completed a run (Health)',
-    'Read 30 pages (Personal)',
-    'Saved $200 (Financial)',
-    'Attended team meeting (Career)'
-  ];
+  constructor(private router: Router, private goalService: GoalService) {}
+  
+  goals: Goal[] = [];
+  recentActivity: string[] = [];
+
+  ngOnInit() {
+    this.goalsSubscription = this.goalService.goals$.subscribe(goals => {
+      this.goals = goals;
+    });
+
+    this.recentActivitySubscription = this.goalService.recentActivity$.subscribe(activity => {
+      this.recentActivity = activity;
+    });
+  }
+
+  ngOnDestroy() {
+    this.goalsSubscription.unsubscribe();
+    this.recentActivitySubscription.unsubscribe();
+  }
 
   getCategoryIcon(category: string): string {
     const icons: { [key: string]: string } = {
@@ -310,5 +282,9 @@ export class DashboardComponent {
 
   navigateToGoalsList() {
     this.router.navigate(['/goals-list']);
+  }
+
+  navigateToAnalytics() {
+    this.router.navigate(['/analytics']);
   }
 } 
