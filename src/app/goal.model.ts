@@ -10,16 +10,20 @@ export interface Milestone {
   title: string;
   completed: boolean;
   dueDate?: Date;
+  description?: string;
 }
 
 export interface Goal {
-  id?: string;
+  id: string;
   title: string;
   category: Category;
   progress: Progress;
   nextMilestone: string;
   deadline?: Date;
   status?: 'active' | 'completed' | 'overdue';
+  targetValue?: number;
+  targetUnit?: string;
+  description?: string;
   milestones: Milestone[];
 }
 
