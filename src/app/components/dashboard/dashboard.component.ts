@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
-import { Goal, Category, Progress } from '../goal.model';
+import { Goal, Category, Progress } from '../../goal.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -34,7 +35,7 @@ import { Goal, Category, Progress } from '../goal.model';
             <div class="user-avatar">
               <span>👤</span>
             </div>
-            <button mat-icon-button class="nav-btn" aria-label="Add Goal">
+            <button mat-icon-button class="nav-btn" aria-label="Add Goal" (click)="navigateToAddGoal()">
               <mat-icon>add</mat-icon>
             </button>
           </nav>
@@ -197,6 +198,8 @@ import { Goal, Category, Progress } from '../goal.model';
   `
 })
 export class DashboardComponent {
+  constructor(private router: Router) {}
+  
   goals: Goal[] = [
     {
       title: 'Run 5km 3x/week',
@@ -289,5 +292,9 @@ export class DashboardComponent {
 
   getCompletedMilestones(milestones: any[]): number {
     return milestones.filter(m => m.completed).length;
+  }
+
+  navigateToAddGoal() {
+    this.router.navigate(['/add-goal']);
   }
 } 
