@@ -107,10 +107,16 @@ import { Goal, Category, Progress } from '../../goal.model';
         <section class="goals-section">
           <div class="section-header">
             <h3 class="section-title">Your Active Goals</h3>
-            <button mat-button class="view-all-btn">
-              <mat-icon>add</mat-icon>
-              Add Goal
-            </button>
+            <div class="section-actions">
+              <button mat-button class="view-all-btn" (click)="navigateToGoalsList()">
+                <mat-icon>list</mat-icon>
+                View All Goals
+              </button>
+              <button mat-button class="add-goal-btn" (click)="navigateToAddGoal()">
+                <mat-icon>add</mat-icon>
+                Add Goal
+              </button>
+            </div>
           </div>
           <div class="goals-grid">
             <mat-card *ngFor="let goal of goals; let i = index" class="goal-card" [ngClass]="'goal-' + goal.category.toLowerCase()" tabindex="0">
@@ -296,5 +302,9 @@ export class DashboardComponent {
 
   navigateToAddGoal() {
     this.router.navigate(['/add-goal']);
+  }
+
+  navigateToGoalsList() {
+    this.router.navigate(['/goals-list']);
   }
 } 

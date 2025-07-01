@@ -13,10 +13,13 @@ export interface Milestone {
 }
 
 export interface Goal {
+  id?: string;
   title: string;
   category: Category;
   progress: Progress;
   nextMilestone: string;
+  deadline?: Date;
+  status?: 'active' | 'completed' | 'overdue';
   milestones: Milestone[];
 }
 
