@@ -14,6 +14,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Goal, Category } from '../../goal.model';
 import { NotificationService } from '../../services/notification.service';
 import { UpdateHistoryService } from '../../services/update-history.service';
+import { GoalService } from '../../services/goal.service';
 
 @Component({
   selector: 'app-edit-goal',
@@ -198,7 +199,8 @@ export class EditGoalComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private notificationService: NotificationService,
-    private updateHistoryService: UpdateHistoryService
+    private updateHistoryService: UpdateHistoryService,
+    private goalService: GoalService
   ) {}
 
   ngOnInit() {

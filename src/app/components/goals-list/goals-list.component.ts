@@ -298,7 +298,7 @@ export class GoalsListComponent implements OnInit, OnDestroy {
 
   loadGoals() {
     console.log('Loading goals...');
-    this.subscription = this.goalService.getAllGoals().subscribe(goals => {
+    this.subscription = this.goalService.getGoals().subscribe(goals => {
       this.allGoals = goals;
       console.log('All goals loaded:', this.allGoals.length);
       console.log('Goals with IDs 3, 4, 5:', this.allGoals.filter(g => ['3', '4', '5'].includes(g.id)));
@@ -473,47 +473,25 @@ export class GoalsListComponent implements OnInit, OnDestroy {
 
   markComplete(goal: Goal) {
     console.log('Mark complete:', goal);
-    goal.progress.percent = 100;
-    goal.status = 'completed';
-    this.applyFilters();
-    // Show success notification
+    this.goalService.markGoalComplete(goal.id);
     console.log(`Goal "${goal.title}" marked as completed!`);
   }
 
   duplicateGoal(goal: Goal) {
     console.log('Duplicate goal:', goal);
-    // Create a copy of the goal with a new ID
-    const duplicatedGoal: Goal = {
-      ...goal,
-      id: (this.allGoals.length + 1).toString(),
-      title: `${goal.title} (Copy)`,
-      progress: { percent: 0 },
-      status: 'active',
-      milestones: goal.milestones.map(milestone => ({
-        ...milestone,
-        id: (Math.random() * 1000).toString(),
-        completed: false
-      }))
-    };
-    
-    this.allGoals.push(duplicatedGoal);
-    this.applyFilters();
+    this.goalService.duplicateGoal(goal);
     console.log(`Goal "${goal.title}" duplicated successfully!`);
   }
 
   archiveGoal(goal: Goal) {
     console.log('Archive goal:', goal);
-    // Mark goal as archived (you could add an archived property to the Goal interface)
-    goal.status = 'archived';
-    this.applyFilters();
+    this.goalService.archiveGoal(goal.id);
     console.log(`Goal "${goal.title}" archived successfully!`);
   }
 
   deleteGoal(goal: Goal) {
     console.log('Delete goal:', goal);
-    // Remove the goal from the list
-    this.allGoals = this.allGoals.filter(g => g.id !== goal.id);
-    this.applyFilters();
+    this.goalService.deleteGoal(goal.id);
     console.log(`Goal "${goal.title}" deleted successfully!`);
   }
 
