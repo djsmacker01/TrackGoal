@@ -1,0 +1,1010 @@
+.analytics-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+  padding: 20px;
+  font-family: 'Inter', sans-serif;
+  position: relative;
+  color: #f3f4f6;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+    pointer-events: none;
+  }
+}
+
+// Modern background alternatives - uncomment one of these for different modern looks:
+
+// Option 1: Modern Dark Blue Gradient
+// background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #667eea 100%);
+
+// Option 2: Modern Purple-Blue Gradient
+// background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #a855f7 100%);
+
+// Option 3: Modern Teal-Blue Gradient
+// background: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 50%, #6366f1 100%);
+
+// Option 4: Modern Dark Theme
+// background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+
+// Option 5: Modern Glass Effect
+// background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
+
+// Option 6: Modern Sunset Gradient
+// background: linear-gradient(135deg, #f59e0b 0%, #ef4444 50%, #ec4899 100%);
+
+// Option 7: Modern Ocean Gradient
+// background: linear-gradient(135deg, #0891b2 0%, #0ea5e9 50%, #3b82f6 100%);
+
+// Option 8: Modern Forest Gradient
+// background: linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%);
+
+// Header Section
+  .analytics-header {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 32px;
+    margin-bottom: 32px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    position: relative;
+    z-index: 1;
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  .header-text {
+    .page-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: white;
+      margin: 0 0 8px 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .title-icon {
+        font-size: 2rem;
+        animation: pulse 2s infinite;
+      }
+
+      @media (max-width: 768px) {
+        font-size: 2rem;
+      }
+    }
+
+    .page-subtitle {
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.8);
+      margin: 0;
+      font-weight: 400;
+    }
+  }
+
+  .header-controls {
+    .back-btn {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      padding: 12px 20px;
+      font-weight: 600;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      margin-right: 16px;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+
+      mat-icon {
+        margin-right: 8px;
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    .date-range-selector {
+      min-width: 200px;
+
+      ::ng-deep .mat-mdc-form-field {
+        .mat-mdc-form-field-flex {
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 12px;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .mat-mdc-form-field-label {
+          color: rgba(255, 255, 255, 0.8);
+        }
+
+        .mat-mdc-select-value {
+          color: white;
+        }
+
+        .mat-mdc-select-arrow {
+          color: rgba(255, 255, 255, 0.8);
+        }
+      }
+    }
+  }
+}
+
+.analytics-header .header-text .page-title,
+.analytics-header .header-text .page-subtitle,
+.analytics-header .header-content,
+.metrics-section .metric-card .metric-content .metric-value,
+.metrics-section .metric-card .metric-content .metric-label,
+.metrics-section .metric-card .metric-content .metric-trend,
+.charts-section .chart-header h3,
+.charts-section .chart-header p,
+.performance-section .section-header h2,
+.performance-section .section-header p,
+.performance-section .performance-card .performance-header .goal-info h4,
+.performance-section .performance-card .performance-header .goal-info mat-chip-set .mat-mdc-chip,
+.performance-section .performance-card .performance-badge,
+.performance-section .performance-card .performance-stats .stat-label,
+.performance-section .performance-card .performance-stats .stat-value,
+.performance-section .performance-card .performance-stats .progress-text,
+.achievements-section .section-header h2,
+.achievements-section .section-header p,
+.achievements-section .streaks-card h3,
+.achievements-section .streaks-card .streak-info h4,
+.achievements-section .streaks-card .streak-info p,
+.achievements-section .achievements-list h3,
+.achievements-section .achievements-list .achievement-info h4,
+.achievements-section .achievements-list .achievement-info p,
+.achievements-section .achievements-list .achievement-info .achievement-date,
+.insights-section .section-header h2,
+.insights-section .section-header p,
+.insights-section .insight-card .insight-content h4,
+.insights-section .insight-card .insight-content p,
+.insights-section .personal-records h3,
+.insights-section .personal-records .record-info h4,
+.insights-section .personal-records .record-info p {
+  color: #f3f4f6 !important;
+}
+
+// Secondary/muted text
+.analytics-header .header-text .page-subtitle,
+.metrics-section .metric-card .metric-content .metric-label,
+.metrics-section .metric-card .metric-content .metric-trend,
+.charts-section .chart-header p,
+.performance-section .section-header p,
+.performance-section .performance-card .performance-stats .stat-label,
+.achievements-section .section-header p,
+.achievements-section .streaks-card .streak-info p,
+.achievements-section .achievements-list .achievement-info p,
+.achievements-section .achievements-list .achievement-info .achievement-date,
+.insights-section .section-header p,
+.insights-section .insight-card .insight-content p,
+.insights-section .personal-records .record-info p {
+  color: #cbd5e1 !important;
+}
+
+// Chart/legend text
+.chart-legend .legend-label,
+.chart-legend .legend-value,
+.custom-line-chart .chart-label,
+.custom-line-chart .point-value {
+  color: #f3f4f6 !important;
+}
+
+// Card icons
+.metric-icon,
+.stat-icon,
+.streak-icon,
+.achievement-icon mat-icon,
+.insight-icon mat-icon,
+.record-icon {
+  color: #fff !important;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
+}
+
+// Chips and badges
+mat-chip, .performance-badge, .insight-priority {
+  color: #fff !important;
+}
+
+// Fix for pie chart center text
+.custom-pie-chart .pie-center .center-text,
+.custom-pie-chart .pie-center .center-label {
+  color: #1e293b !important;
+}
+
+// Metrics Section
+.metrics-section {
+  margin-bottom: 32px;
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+
+          .metric-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 32px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+      }
+
+      &:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      }
+
+      &.primary::before { background: linear-gradient(90deg, #667eea, #764ba2); }
+      &.success::before { background: linear-gradient(90deg, #4CAF50, #45a049); }
+      &.active::before { background: linear-gradient(90deg, #FF9800, #F57C00); }
+      &.monthly::before { background: linear-gradient(90deg, #9C27B0, #7B1FA2); }
+
+      .metric-icon {
+        font-size: 2.5rem;
+        margin-bottom: 16px;
+        display: block;
+      }
+
+      .metric-content {
+        .metric-value {
+          font-size: 3rem;
+          font-weight: 700;
+          color: white;
+          margin: 0 0 8px 0;
+          line-height: 1;
+        }
+
+        .metric-label {
+          font-size: 1rem;
+          color: rgba(255, 255, 255, 0.8);
+          margin: 0 0 16px 0;
+          font-weight: 500;
+        }
+
+        .metric-trend {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 0.9rem;
+          font-weight: 500;
+
+          &.positive {
+            color: #4CAF50;
+          }
+
+          mat-icon {
+            font-size: 1rem;
+            width: 1rem;
+            height: 1rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Charts Section
+.charts-section {
+  margin-bottom: 32px;
+
+  .charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 24px;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+
+          .chart-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 32px;
+        transition: all 0.3s ease;
+        position: relative;
+        z-index: 1;
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+      }
+
+      .chart-header {
+        margin-bottom: 24px;
+
+        h3 {
+          font-size: 1.5rem;
+          font-weight: 600;
+          color: white;
+          margin: 0 0 8px 0;
+        }
+
+        p {
+          color: rgba(255, 255, 255, 0.7);
+          margin: 0;
+          font-size: 0.9rem;
+        }
+      }
+
+      .chart-container {
+        position: relative;
+        min-height: 200px;
+      }
+    }
+  }
+}
+
+// Custom Line Chart
+.custom-line-chart {
+  position: relative;
+  height: 200px;
+  padding: 20px 0;
+
+  .chart-line {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+
+    .chart-point {
+      position: absolute;
+      bottom: 0;
+      transform: translateX(-50%);
+
+      .point-value {
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(255, 255, 255, 0.9);
+        color: #333;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .point-dot {
+        width: 12px;
+        height: 12px;
+        background: #6366f1;
+        border-radius: 50%;
+        border: 3px solid white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+
+        &.above-target {
+          background: #4CAF50;
+        }
+      }
+
+      &:hover {
+        .point-value {
+          opacity: 1;
+        }
+
+        .point-dot {
+          transform: scale(1.5);
+        }
+      }
+    }
+
+    .chart-label {
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.7);
+      font-weight: 500;
+    }
+  }
+
+  .chart-baseline {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.3);
+  }
+}
+
+// Custom Pie Chart
+.custom-pie-chart {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto 24px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    #4CAF50 0deg 120deg,
+    #2196F3 120deg 210deg,
+    #9C27B0 210deg 270deg,
+    #FF9800 270deg 300deg,
+    #F44336 300deg 360deg
+  );
+
+  .pie-segment {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 50% 100%);
+  }
+
+  .pie-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+    .center-text {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #333;
+      line-height: 1;
+    }
+
+    .center-label {
+      font-size: 0.8rem;
+      color: #666;
+      font-weight: 500;
+    }
+  }
+}
+
+.chart-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .legend-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .legend-label {
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 500;
+      flex: 1;
+    }
+
+    .legend-value {
+      color: rgba(255, 255, 255, 0.7);
+      font-weight: 600;
+    }
+  }
+}
+
+// Performance Section
+.performance-section {
+  margin-bottom: 32px;
+
+  .section-header {
+    margin-bottom: 24px;
+
+    h2 {
+      font-size: 2rem;
+      font-weight: 600;
+      color: white;
+      margin: 0 0 8px 0;
+    }
+
+    p {
+      color: rgba(255, 255, 255, 0.7);
+      margin: 0;
+      font-size: 1rem;
+    }
+  }
+
+  .performance-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 24px;
+
+          .performance-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 24px;
+        transition: all 0.3s ease;
+        position: relative;
+        z-index: 1;
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+      }
+
+      .performance-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 20px;
+
+        .goal-info {
+          h4 {
+            color: white;
+            margin: 0 0 12px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+          }
+
+          mat-chip-set {
+            ::ng-deep .mat-mdc-chip {
+              color: white;
+              font-weight: 500;
+              font-size: 0.8rem;
+            }
+          }
+        }
+
+        .performance-badge {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          padding: 6px 12px;
+          border-radius: 20px;
+          font-size: 0.8rem;
+          font-weight: 600;
+          color: white;
+
+          &.fastest {
+            background: linear-gradient(90deg, #4CAF50, #45a049);
+          }
+
+          &.longest {
+            background: linear-gradient(90deg, #FF9800, #F57C00);
+          }
+
+          &.current {
+            background: linear-gradient(90deg, #2196F3, #1976D2);
+          }
+
+          mat-icon {
+            font-size: 1rem;
+            width: 1rem;
+            height: 1rem;
+          }
+        }
+      }
+
+      .performance-stats {
+        .stat-item {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 16px;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+
+          .stat-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            min-width: 120px;
+          }
+
+          .stat-value {
+            color: white;
+            font-weight: 600;
+          }
+
+          .progress-bar {
+            flex: 1;
+            height: 8px;
+            border-radius: 4px;
+
+            ::ng-deep .mat-mdc-progress-bar-fill {
+              background: linear-gradient(90deg, #4CAF50, #45a049);
+            }
+          }
+
+          .progress-text {
+            color: white;
+            font-weight: 600;
+            min-width: 40px;
+            text-align: right;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Achievements Section
+.achievements-section {
+  margin-bottom: 32px;
+
+  .achievements-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 24px;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+
+          .streaks-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 24px;
+        position: relative;
+        z-index: 1;
+
+      h3 {
+        color: white;
+        margin: 0 0 20px 0;
+        font-size: 1.3rem;
+        font-weight: 600;
+      }
+
+      .streak-item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 20px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        .streak-icon {
+          font-size: 2rem;
+          width: 48px;
+          height: 48px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 12px;
+        }
+
+        .streak-info {
+          h4 {
+            color: white;
+            margin: 0 0 4px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+          }
+
+          p {
+            color: rgba(255, 255, 255, 0.7);
+            margin: 0;
+            font-size: 0.9rem;
+          }
+        }
+      }
+    }
+
+          .achievements-list {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 24px;
+        position: relative;
+        z-index: 1;
+
+      h3 {
+        color: white;
+        margin: 0 0 20px 0;
+        font-size: 1.3rem;
+        font-weight: 600;
+      }
+
+      .achievement-item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 16px;
+        border-radius: 12px;
+        margin-bottom: 12px;
+        transition: all 0.3s ease;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.05);
+        }
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        .achievement-icon {
+          width: 48px;
+          height: 48px;
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(255, 255, 255, 0.1);
+          transition: all 0.3s ease;
+
+          &.unlocked {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+          }
+
+          mat-icon {
+            color: white;
+            font-size: 1.5rem;
+          }
+        }
+
+        .achievement-info {
+          flex: 1;
+
+          h4 {
+            color: white;
+            margin: 0 0 4px 0;
+            font-size: 1rem;
+            font-weight: 600;
+          }
+
+          p {
+            color: rgba(255, 255, 255, 0.7);
+            margin: 0 0 4px 0;
+            font-size: 0.9rem;
+          }
+
+          .achievement-date {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.8rem;
+            font-weight: 500;
+          }
+        }
+
+        .achievement-status {
+          mat-icon {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 1.5rem;
+
+            &.unlocked {
+              color: #4CAF50;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Insights Section
+.insights-section {
+  .insights-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+
+          .insight-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 24px;
+        transition: all 0.3s ease;
+        position: relative;
+        z-index: 1;
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+      }
+
+      .insight-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+
+        .insight-icon {
+          width: 48px;
+          height: 48px;
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          mat-icon {
+            color: white;
+            font-size: 1.5rem;
+          }
+        }
+
+        .insight-priority {
+          padding: 4px 12px;
+          border-radius: 12px;
+          font-size: 0.8rem;
+          font-weight: 600;
+          color: white;
+          text-transform: uppercase;
+        }
+      }
+
+      .insight-content {
+        h4 {
+          color: white;
+          margin: 0 0 8px 0;
+          font-size: 1.1rem;
+          font-weight: 600;
+        }
+
+        p {
+          color: rgba(255, 255, 255, 0.8);
+          margin: 0;
+          font-size: 0.9rem;
+          line-height: 1.5;
+        }
+      }
+    }
+  }
+
+      .personal-records {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 24px;
+      position: relative;
+      z-index: 1;
+
+    h3 {
+      color: white;
+      margin: 0 0 20px 0;
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+
+    .records-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+
+      .record-item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 16px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        transition: all 0.3s ease;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.08);
+          transform: translateY(-2px);
+        }
+
+        .record-icon {
+          font-size: 2rem;
+          width: 48px;
+          height: 48px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 12px;
+        }
+
+        .record-info {
+          h4 {
+            color: white;
+            margin: 0 0 4px 0;
+            font-size: 1rem;
+            font-weight: 600;
+          }
+
+          p {
+            color: rgba(255, 255, 255, 0.7);
+            margin: 0;
+            font-size: 0.9rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .analytics-container {
+    padding: 16px;
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .performance-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .insights-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .records-grid {
+    grid-template-columns: 1fr;
+  }
+} 

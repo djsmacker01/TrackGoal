@@ -1,0 +1,282 @@
+<div class="analytics-container">
+  <!-- Header Section -->
+  <div class="analytics-header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1 class="page-title">
+          <span class="title-icon">📊</span>
+          Analytics & Insights
+        </h1>
+        <p class="page-subtitle">Track your progress and discover patterns in your goal achievement journey</p>
+      </div>
+      <div class="header-controls">
+        <button mat-button class="back-btn" (click)="navigateToDashboard()">
+          <mat-icon>arrow_back</mat-icon>
+          Back to Dashboard
+        </button>
+        <mat-form-field appearance="outline" class="date-range-selector">
+          <mat-label>Time Range</mat-label>
+          <mat-select [(ngModel)]="dateRange" (selectionChange)="onDateRangeChange()">
+            <mat-option value="7">Last 7 days</mat-option>
+            <mat-option value="30">Last 30 days</mat-option>
+            <mat-option value="90">Last 3 months</mat-option>
+            <mat-option value="365">Last year</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+
+  <!-- Key Metrics Cards -->
+  <div class="metrics-section">
+    <div class="metrics-grid">
+      <div class="metric-card primary">
+        <div class="metric-icon">🎯</div>
+        <div class="metric-content">
+          <h3 class="metric-value">{{ analyticsData.totalGoals }}</h3>
+          <p class="metric-label">Total Goals</p>
+          <div class="metric-trend positive">
+            <mat-icon>trending_up</mat-icon>
+            <span>+12% this month</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="metric-card success">
+        <div class="metric-icon">✅</div>
+        <div class="metric-content">
+          <h3 class="metric-value">{{ analyticsData.completionRate }}%</h3>
+          <p class="metric-label">Completion Rate</p>
+          <div class="metric-trend positive">
+            <mat-icon>trending_up</mat-icon>
+            <span>+5% improvement</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="metric-card active">
+        <div class="metric-icon">🔥</div>
+        <div class="metric-content">
+          <h3 class="metric-value">{{ analyticsData.currentStreak }}</h3>
+          <p class="metric-label">Current Streak</p>
+          <div class="metric-trend positive">
+            <mat-icon>local_fire_department</mat-icon>
+            <span>Keep it up!</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="metric-card monthly">
+        <div class="metric-icon">📅</div>
+        <div class="metric-content">
+          <h3 class="metric-value">{{ analyticsData.goalsCompletedThisMonth }}</h3>
+          <p class="metric-label">Completed This Month</p>
+          <div class="metric-trend positive">
+            <mat-icon>calendar_today</mat-icon>
+            <span>On track!</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Section -->
+  <div class="charts-section">
+    <div class="charts-grid">
+      <!-- Progress Trends Chart -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3>Progress Trends</h3>
+          <p>Weekly completion rates over time</p>
+        </div>
+        <div class="chart-container">
+          <div class="custom-line-chart">
+            <div class="chart-line" *ngFor="let week of analyticsData.weeklyProgress; let i = index">
+              <div class="chart-point" [style.left.%]="(i / (analyticsData.weeklyProgress.length - 1)) * 100">
+                <div class="point-value">{{ week.rate }}%</div>
+                <div class="point-dot" [class.above-target]="week.rate >= 100"></div>
+              </div>
+              <div class="chart-label">{{ week.week }}</div>
+            </div>
+            <div class="chart-baseline"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category Breakdown Chart -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3>Category Distribution</h3>
+          <p>Goals breakdown by category</p>
+        </div>
+        <div class="chart-container">
+          <div class="custom-pie-chart">
+            <div class="pie-segment" *ngFor="let category of analyticsData.categoryBreakdown; let i = index"
+              [style.background]="category.color"
+              [style.transform]="'rotate(' + (i * 360 / analyticsData.categoryBreakdown.length) + 'deg)'">
+            </div>
+            <div class="pie-center">
+              <span class="center-text">{{ analyticsData.totalGoals }}</span>
+              <span class="center-label">Total</span>
+            </div>
+          </div>
+          <div class="chart-legend">
+            <div class="legend-item" *ngFor="let category of analyticsData.categoryBreakdown">
+              <div class="legend-color" [style.background]="category.color"></div>
+              <span class="legend-label">{{ category.category }}</span>
+              <span class="legend-value">{{ category.count }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Goal Performance Section -->
+  <div class="performance-section">
+    <div class="section-header">
+      <h2>Goal Performance</h2>
+      <p>Your fastest and longest-running goals</p>
+    </div>
+
+    <div class="performance-grid">
+      <div class="performance-card" *ngFor="let goal of analyticsData.goalPerformance">
+        <div class="performance-header">
+          <div class="goal-info">
+            <h4>{{ goal.title }}</h4>
+            <mat-chip-set>
+              <mat-chip [style.background]="getCategoryColor(goal.category)">
+                {{ goal.category }}
+              </mat-chip>
+            </mat-chip-set>
+          </div>
+          <div class="performance-badge" [class]="goal.status">
+            <mat-icon>
+              {{ goal.status === 'fastest' ? 'speed' : goal.status === 'longest' ? 'schedule' : 'trending_up' }}
+            </mat-icon>
+            {{ goal.status === 'fastest' ? 'Fastest' : goal.status === 'longest' ? 'Longest' : 'Current' }}
+          </div>
+        </div>
+
+        <div class="performance-stats">
+          <div class="stat-item">
+            <span class="stat-label">Time to Complete:</span>
+            <span class="stat-value">{{ goal.timeToComplete }} days</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Progress:</span>
+            <mat-progress-bar mode="determinate" [value]="goal.progress" class="progress-bar">
+            </mat-progress-bar>
+            <span class="progress-text">{{ goal.progress }}%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Streaks and Achievements Section -->
+  <div class="achievements-section">
+    <div class="section-header">
+      <h2>Streaks & Achievements</h2>
+      <p>Your milestones and accomplishments</p>
+    </div>
+
+    <div class="achievements-grid">
+      <div class="streaks-card">
+        <h3>Current Streaks</h3>
+        <div class="streak-item">
+          <div class="streak-icon">🔥</div>
+          <div class="streak-info">
+            <h4>{{ analyticsData.currentStreak }} days</h4>
+            <p>Current streak</p>
+          </div>
+        </div>
+        <div class="streak-item">
+          <div class="streak-icon">🏆</div>
+          <div class="streak-info">
+            <h4>{{ analyticsData.bestStreak }} days</h4>
+            <p>Best streak ever</p>
+          </div>
+        </div>
+        <div class="streak-item">
+          <div class="streak-icon">⏱️</div>
+          <div class="streak-info">
+            <h4>{{ analyticsData.averageCompletionTime }} days</h4>
+            <p>Average completion time</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="achievements-list">
+        <h3>Achievements</h3>
+        <div class="achievement-item" *ngFor="let achievement of analyticsData.achievements">
+          <div class="achievement-icon" [class.unlocked]="achievement.unlocked">
+            <mat-icon>{{ achievement.icon }}</mat-icon>
+          </div>
+          <div class="achievement-info">
+            <h4>{{ achievement.title }}</h4>
+            <p>{{ achievement.description }}</p>
+            <span class="achievement-date" *ngIf="achievement.unlocked && achievement.date">
+              {{ achievement.date | date:'MMM d, y' }}
+            </span>
+          </div>
+          <div class="achievement-status" [class.unlocked]="achievement.unlocked">
+            <mat-icon>{{ achievement.unlocked ? 'check_circle' : 'lock' }}</mat-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Insights and Recommendations Section -->
+  <div class="insights-section">
+    <div class="section-header">
+      <h2>Insights & Recommendations</h2>
+      <p>Personalized insights to improve your goal achievement</p>
+    </div>
+
+    <div class="insights-grid">
+      <div class="insight-card" *ngFor="let recommendation of analyticsData.recommendations">
+        <div class="insight-header">
+          <div class="insight-icon" [style.background]="getPriorityColor(recommendation.priority)">
+            <mat-icon>{{ getRecommendationIcon(recommendation.type) }}</mat-icon>
+          </div>
+          <div class="insight-priority" [style.background]="getPriorityColor(recommendation.priority)">
+            {{ recommendation.priority }}
+          </div>
+        </div>
+        <div class="insight-content">
+          <h4>{{ recommendation.title }}</h4>
+          <p>{{ recommendation.description }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="personal-records">
+      <h3>Personal Records</h3>
+      <div class="records-grid">
+        <div class="record-item">
+          <div class="record-icon">📈</div>
+          <div class="record-info">
+            <h4>Most Productive Week</h4>
+            <p>{{ analyticsData.mostProductiveWeek }}</p>
+          </div>
+        </div>
+        <div class="record-item">
+          <div class="record-icon">🎯</div>
+          <div class="record-info">
+            <h4>Best Category</h4>
+            <p>Health & Fitness ({{ analyticsData.categoryBreakdown[0].percentage }}% success)</p>
+          </div>
+        </div>
+        <div class="record-item">
+          <div class="record-icon">⚡</div>
+          <div class="record-info">
+            <h4>Fastest Goal</h4>
+            <p>Learn Spanish Basics (30 days)</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
