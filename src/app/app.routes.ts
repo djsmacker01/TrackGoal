@@ -6,6 +6,7 @@ import { GoalDetailComponent } from './components/goal-detail/goal-detail.compon
 import { EditGoalComponent } from './components/edit-goal/edit-goal.component';
 import { AddMilestoneComponent } from './components/add-milestone/add-milestone.component';
 import { UpdateProgressComponent } from './components/update-progress/update-progress.component';
+import { AnalyticsComponent } from './components/analytics/analytics.component';
 
 export const routes: Routes = [
   { path: '', component: DashboardComponent },
@@ -15,4 +16,5 @@ export const routes: Routes = [
   { path: 'edit-goal/:id', component: EditGoalComponent },
   { path: 'add-milestone/:goalId', component: AddMilestoneComponent },
   { path: 'update-progress/:goalId', component: UpdateProgressComponent },
+  { path: 'analytics', component: AnalyticsComponent },
 ];

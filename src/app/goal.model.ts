@@ -20,7 +20,7 @@ export interface Goal {
   progress: Progress;
   nextMilestone: string;
   deadline?: Date;
-  status?: 'active' | 'completed' | 'overdue';
+  status?: 'active' | 'completed' | 'overdue' | 'archived';
   targetValue?: number;
   targetUnit?: string;
   description?: string;

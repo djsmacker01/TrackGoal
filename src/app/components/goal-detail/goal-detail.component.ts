@@ -526,12 +526,15 @@ export class GoalDetailComponent implements OnInit, OnDestroy {
   }
 
   toggleMilestone(milestone: Milestone) {
+    if (!this.goal) return;
+    
     milestone.completed = !milestone.completed;
     // Update goal progress based on completed milestones
-    if (this.goal) {
-      const completedCount = this.goal.milestones.filter(m => m.completed).length;
-      this.goal.progress.percent = Math.round((completedCount / this.goal.milestones.length) * 100);
-    }
+    const completedCount = this.goal.milestones.filter(m => m.completed).length;
+    this.goal.progress.percent = Math.round((completedCount / this.goal.milestones.length) * 100);
+    
+    // Update the goal in the service
+    this.goalService.updateGoal(this.goal);
   }
 
   editGoal() {
@@ -558,16 +561,17 @@ export class GoalDetailComponent implements OnInit, OnDestroy {
 
   confirmDelete() {
     if (this.goal) {
-      // Simulate delete operation
-      setTimeout(() => {
-        this.notificationService.success(
-          'Goal Deleted', 
-          `"${this.goal!.title}" has been successfully deleted.`, 
-          5000
-        );
-        this.showDeleteConfirmation = false;
-        this.router.navigate(['/goals-list']);
-      }, 500);
+      // Delete the goal using the service
+      this.goalService.deleteGoal(this.goal.id);
+      
+      // Show success notification
+      this.notificationService.success(
+        'Goal Deleted', 
+        `"${this.goal!.title}" has been successfully deleted.`, 
+        5000
+      );
+      this.showDeleteConfirmation = false;
+      this.router.navigate(['/goals-list']);
     }
   }
 
