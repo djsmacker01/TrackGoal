@@ -208,6 +208,7 @@ export class DashboardComponent {
   
   goals: Goal[] = [
     {
+      id: '1',
       title: 'Run 5km 3x/week',
       category: 'Health',
       progress: { percent: 70 },
@@ -220,6 +221,7 @@ export class DashboardComponent {
       ]
     },
     {
+      id: '2',
       title: 'Read 12 books',
       category: 'Personal',
       progress: { percent: 50 },
@@ -232,6 +234,7 @@ export class DashboardComponent {
       ]
     },
     {
+      id: '3',
       title: 'Save $5,000',
       category: 'Financial',
       progress: { percent: 40 },
@@ -244,6 +247,7 @@ export class DashboardComponent {
       ]
     },
     {
+      id: '4',
       title: 'Get a promotion',
       category: 'Career',
       progress: { percent: 20 },

@@ -11,6 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { Router } from '@angular/router';
+import { NotificationService } from '../../services/notification.service';
 import { Category } from '../../goal.model';
 
 @Component({
@@ -140,9 +141,6 @@ import { Category } from '../../goal.model';
               <mat-error *ngIf="goalForm.get('deadline')?.hasError('required')">
                 Deadline is required
               </mat-error>
-              <mat-error *ngIf="goalForm.get('deadline')?.hasError('invalidDate')">
-                Please select a valid future date
-              </mat-error>
             </mat-form-field>
 
             <!-- Action Buttons -->
@@ -183,7 +181,8 @@ export class AddGoalComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit() {
@@ -229,13 +228,7 @@ export class AddGoalComponent implements OnInit {
       if (!control.value) {
         return null;
       }
-      const selectedDate = new Date(control.value);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      
-      if (selectedDate < today) {
-        return { invalidDate: true };
-      }
+      // Allow any date selection - removed future date restriction
       return null;
     };
   }
@@ -248,6 +241,7 @@ export class AddGoalComponent implements OnInit {
       setTimeout(() => {
         console.log('Goal data:', this.goalForm.value);
         this.isSubmitting = false;
+        this.notificationService.success('Goal Created', 'Your new goal has been successfully created!', 5000);
         this.router.navigate(['/']);
       }, 1500);
     } else {
