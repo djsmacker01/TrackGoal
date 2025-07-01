@@ -22,18 +22,29 @@ body {
 
 /* Custom CSS Variables for Colors */
 :root {
-  --primary-color: #1976d2;
-  --accent-color: #ff4081;
-  --success-color: #43a047;
-  --warning-color: #fbc02d;
-  --danger-color: #f44336;
-  --text-primary: #222;
-  --text-secondary: #666;
-  --background-light: #f4f6fa;
-  --background-white: #fff;
-  --border-color: #e0e0e0;
-  --shadow-light: 0 2px 8px rgba(0,0,0,0.04);
-  --shadow-medium: 0 4px 16px rgba(0,0,0,0.08);
+  --primary-color: #6366f1;
+  --primary-light: #818cf8;
+  --primary-dark: #4f46e5;
+  --accent-color: #ec4899;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --danger-color: #ef4444;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --background-light: #f8fafc;
+  --background-white: #ffffff;
+  --background-card: #ffffff;
+  --border-color: #e5e7eb;
+  --border-light: #f3f4f6;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-success: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  --gradient-warning: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  --gradient-danger: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
 }
 
 html, body { height: 100%; }

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NgFor, NgClass } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -10,7 +10,7 @@ import { Goal, Category, Progress } from '../goal.model';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [NgFor, NgClass, MatCardModule, MatButtonModule, MatProgressBarModule, MatIconModule, MatChipsModule],
+  imports: [CommonModule, MatCardModule, MatButtonModule, MatProgressBarModule, MatIconModule, MatChipsModule],
   styleUrls: ['./dashboard.component.scss'],
   template: `
     <div class="dashboard-container">
@@ -34,6 +34,9 @@ import { Goal, Category, Progress } from '../goal.model';
             <div class="user-avatar">
               <span>👤</span>
             </div>
+            <button mat-icon-button class="nav-btn" aria-label="Add Goal">
+              <mat-icon>add</mat-icon>
+            </button>
           </nav>
         </div>
       </header>

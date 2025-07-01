@@ -69,6 +69,10 @@
           background: rgba(99, 102, 241, 0.1);
           transform: translateY(-2px);
         }
+
+        &[aria-label="Add Goal"] {
+          margin-left: 6rem;
+        }
       }
 
       .user-avatar {
@@ -90,6 +94,10 @@
       }
     }
   }
+}
+
+.dashboard-header .nav-btn[aria-label="Add Goal"] {
+  margin-left: 6rem;
 }
 
 // Main Content
