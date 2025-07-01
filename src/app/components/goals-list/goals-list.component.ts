@@ -134,7 +134,9 @@ import { Goal, Category, Progress } from '../../goal.model';
             <mat-card *ngFor="let goal of filteredGoals; let i = index" 
                       class="goal-card" 
                       [ngClass]="'goal-' + goal.category.toLowerCase() + ' status-' + getGoalStatus(goal).toLowerCase()"
-                      tabindex="0">
+                      tabindex="0"
+                      (click)="viewGoal(goal)"
+                      [style.cursor]="'pointer'">
               
               <!-- Goal Header -->
               <div class="goal-header">
@@ -181,7 +183,7 @@ import { Goal, Category, Progress } from '../../goal.model';
               </div>
 
               <!-- Goal Actions -->
-              <div class="goal-actions">
+              <div class="goal-actions" (click)="$event.stopPropagation()">
                 <button mat-button class="action-btn view-btn" (click)="viewGoal(goal)">
                   <mat-icon>visibility</mat-icon>
                   View
@@ -496,8 +498,12 @@ export class GoalsListComponent implements OnInit {
 
   // Action methods
   viewGoal(goal: Goal) {
-    console.log('View goal:', goal);
-    // Navigate to goal detail page
+    console.log('View goal clicked:', goal);
+    if (goal.id) {
+      this.router.navigate(['/goal-detail', goal.id]);
+    } else {
+      console.error('Goal ID is missing:', goal);
+    }
   }
 
   editGoal(goal: Goal) {
