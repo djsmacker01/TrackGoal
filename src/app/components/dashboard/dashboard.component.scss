@@ -284,40 +284,66 @@
 .goals-section {
   margin-bottom: 3rem;
 
-  .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
+      .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
 
-    .section-title {
-      font-size: 1.75rem;
-      font-weight: 800;
-      color: white;
-      margin: 0;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .view-all-btn {
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 12px;
-      padding: 0.75rem 1.5rem;
-      font-weight: 600;
-      backdrop-filter: blur(10px);
-      transition: all 0.3s ease;
-
-      &:hover {
-        background: rgba(255, 255, 255, 0.3);
-        transform: translateY(-2px);
+      .section-title {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: white;
+        margin: 0;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
 
-      mat-icon {
-        margin-right: 0.5rem;
+      .section-actions {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+
+        .view-all-btn {
+          background: rgba(255, 255, 255, 0.2);
+          color: white;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          border-radius: 12px;
+          padding: 0.75rem 1.5rem;
+          font-weight: 600;
+          backdrop-filter: blur(10px);
+          transition: all 0.3s ease;
+
+          &:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+          }
+
+          mat-icon {
+            margin-right: 0.5rem;
+          }
+        }
+
+        .add-goal-btn {
+          background: var(--gradient-primary);
+          color: white;
+          border: none;
+          border-radius: 12px;
+          padding: 0.75rem 1.5rem;
+          font-weight: 600;
+          transition: all 0.3s ease;
+          box-shadow: var(--shadow-md);
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+          }
+
+          mat-icon {
+            margin-right: 0.5rem;
+          }
+        }
       }
     }
-  }
 
   .goals-grid {
     display: grid;
@@ -742,6 +768,18 @@
     flex-direction: column;
     gap: 1rem;
     align-items: flex-start;
+
+    .section-actions {
+      flex-direction: column;
+      gap: 0.75rem;
+      width: 100%;
+
+      .view-all-btn,
+      .add-goal-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
   }
 }
 
