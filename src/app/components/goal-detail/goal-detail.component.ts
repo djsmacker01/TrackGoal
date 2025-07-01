@@ -385,7 +385,9 @@ export class GoalDetailComponent implements OnInit {
   }
 
   loadRecentActivity() {
-    if (!this.goal) return;
+    if (!this.goal) {
+      return;
+    }
 
     this.recentActivity = [
       {
@@ -425,7 +427,9 @@ export class GoalDetailComponent implements OnInit {
   }
 
   loadUpdateHistory() {
-    if (!this.goal) return;
+    if (!this.goal) {
+      return;
+    }
     
     this.goalUpdateHistory = this.updateHistoryService.getUpdateHistorySummary(this.goal.id);
   }
@@ -442,16 +446,26 @@ export class GoalDetailComponent implements OnInit {
   }
 
   getGoalStatus(): string {
-    if (!this.goal) return 'Unknown';
-    if (this.goal.status === 'completed') return 'Completed';
-    if (this.goal.progress.percent === 100) return 'Completed';
+    if (!this.goal) {
+      return 'Unknown';
+    }
+    if (this.goal.status === 'completed') {
+      return 'Completed';
+    }
+    if (this.goal.progress.percent === 100) {
+      return 'Completed';
+    }
     
-    if (!this.goal.deadline) return 'Active';
+    if (!this.goal.deadline) {
+      return 'Active';
+    }
     
     const today = new Date();
     const deadline = new Date(this.goal.deadline);
     
-    if (deadline < today) return 'Overdue';
+    if (deadline < today) {
+      return 'Overdue';
+    }
     return 'Active';
   }
 
@@ -543,8 +557,9 @@ export class GoalDetailComponent implements OnInit {
   }
 
   addMilestone() {
-    console.log('Add milestone to goal:', this.goal);
-    // Open add milestone dialog
+    if (this.goal) {
+      this.router.navigate(['/add-milestone', this.goal.id]);
+    }
   }
 
   updateProgress() {

@@ -4,6 +4,7 @@ import { AddGoalComponent } from './components/add-goal/add-goal.component';
 import { GoalsListComponent } from './components/goals-list/goals-list.component';
 import { GoalDetailComponent } from './components/goal-detail/goal-detail.component';
 import { EditGoalComponent } from './components/edit-goal/edit-goal.component';
+import { AddMilestoneComponent } from './components/add-milestone/add-milestone.component';
 
 export const routes: Routes = [
   { path: '', component: DashboardComponent },
@@ -11,4 +12,5 @@ export const routes: Routes = [
   { path: 'goals-list', component: GoalsListComponent },
   { path: 'goal-detail/:id', component: GoalDetailComponent },
   { path: 'edit-goal/:id', component: EditGoalComponent },
+  { path: 'add-milestone/:goalId', component: AddMilestoneComponent },
 ];
