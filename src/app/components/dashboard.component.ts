@@ -1,17 +1,22 @@
 import { Component } from '@angular/core';
 import { NgFor, NgClass } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatIconModule } from '@angular/material/icon';
+import { MatChipsModule } from '@angular/material/chips';
 import { Goal, Category, Progress } from '../goal.model';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [NgFor, NgClass],
+  imports: [NgFor, NgClass, MatCardModule, MatButtonModule, MatProgressBarModule, MatIconModule, MatChipsModule],
   styleUrls: ['./dashboard.component.scss'],
   template: `
     <header class="dashboard-header">
       <span class="app-title">Goal Tracker</span>
       <nav class="nav">
-        <button class="menu-btn" aria-label="Menu">☰</button>
+        <button mat-icon-button aria-label="Menu"><mat-icon>menu</mat-icon></button>
       </nav>
     </header>
     <section class="welcome-section">
@@ -19,37 +24,35 @@ import { Goal, Category, Progress } from '../goal.model';
       <p>Let's crush your goals today 🚀</p>
     </section>
     <section class="stats-section">
-      <div class="stat-card">
+      <mat-card class="stat-card">
         <div class="stat-value">4</div>
         <div class="stat-label">Total Goals</div>
-      </div>
-      <div class="stat-card">
+      </mat-card>
+      <mat-card class="stat-card">
         <div class="stat-value">2</div>
         <div class="stat-label">Completed This Week</div>
-      </div>
-      <div class="stat-card">
+      </mat-card>
+      <mat-card class="stat-card">
         <div class="stat-value">5</div>
         <div class="stat-label">Current Streak</div>
-      </div>
+      </mat-card>
     </section>
     <section class="goals-section">
       <h3>Your Active Goals</h3>
       <div class="goals-list">
-        <div *ngFor="let goal of goals" class="goal-card" tabindex="0">
+        <mat-card *ngFor="let goal of goals" class="goal-card" tabindex="0">
           <div class="goal-header">
             <span class="goal-title">{{ goal.title }}</span>
-            <span class="category-chip" [ngClass]="'cat-' + goal.category.toLowerCase()">{{ goal.category }}</span>
+            <mat-chip [ngClass]="'cat-' + goal.category.toLowerCase()">{{ goal.category }}</mat-chip>
           </div>
           <div class="goal-progress">
-            <div class="progress-bar">
-              <div class="progress-fill" [style.width.%]="goal.progress.percent"></div>
-            </div>
+            <mat-progress-bar [value]="goal.progress.percent"></mat-progress-bar>
             <span class="progress-label">{{ goal.progress.percent }}%</span>
           </div>
           <div class="goal-milestone">
             <span>Next: {{ goal.nextMilestone }}</span>
           </div>
-        </div>
+        </mat-card>
       </div>
     </section>
     <section class="activity-section">

@@ -11,18 +11,8 @@
     font-weight: 700;
     letter-spacing: 0.02em;
   }
-  .nav .menu-btn {
-    background: none;
-    border: none;
-    font-size: 1.2rem;
+  .nav button {
     color: var(--primary-color);
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-    transition: background-color 0.2s;
-    &:hover {
-      background-color: rgba(25, 118, 210, 0.1);
-    }
   }
 }
 
@@ -95,12 +85,10 @@
         font-weight: 600;
         font-size: 1rem;
       }
-      .category-chip {
+      .mat-chip {
         font-size: 0.8rem;
         font-weight: 500;
         color: #fff;
-        padding: 0.2rem 0.6rem;
-        border-radius: 1rem;
         &.cat-health { background: var(--success-color); }
         &.cat-career { background: var(--primary-color); }
         &.cat-personal { background: #8e24aa; }
@@ -113,17 +101,10 @@
       align-items: center;
       gap: 0.5rem;
       margin: 0.5rem 0;
-      .progress-bar {
+      .mat-progress-bar {
         flex: 1;
         height: 8px;
         border-radius: 4px;
-        background: #e0e0e0;
-        overflow: hidden;
-        .progress-fill {
-          height: 100%;
-          background: var(--primary-color);
-          transition: width 0.3s ease;
-        }
       }
       .progress-label {
         font-size: 0.9rem;
