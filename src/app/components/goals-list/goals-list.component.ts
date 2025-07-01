@@ -269,7 +269,7 @@ export class GoalsListComponent implements OnInit, OnDestroy {
     { value: 'overdue', label: 'Overdue', icon: 'warning' }
   ];
 
-  private subscription: Subscription;
+  private subscription!: Subscription;
 
   constructor(
     private router: Router,

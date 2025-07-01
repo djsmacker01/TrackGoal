@@ -155,7 +155,7 @@ export class GoalService {
       id: (this.goalsSubject.value.length + 1).toString(),
       title: `${goal.title} (Copy)`,
       progress: { percent: 0 },
-      status: 'active',
+      status: 'active' as const,
       milestones: goal.milestones.map(milestone => ({
         ...milestone,
         id: (Math.random() * 1000).toString(),
@@ -170,7 +170,7 @@ export class GoalService {
     const currentGoals = this.goalsSubject.value;
     const updatedGoals = currentGoals.map(goal => 
       goal.id === goalId 
-        ? { ...goal, progress: { percent: 100 }, status: 'completed' }
+        ? { ...goal, progress: { percent: 100 }, status: 'completed' as const }
         : goal
     );
     this.goalsSubject.next(updatedGoals);
@@ -180,7 +180,7 @@ export class GoalService {
     const currentGoals = this.goalsSubject.value;
     const updatedGoals = currentGoals.map(goal => 
       goal.id === goalId 
-        ? { ...goal, status: 'archived' }
+        ? { ...goal, status: 'archived' as const }
         : goal
     );
     this.goalsSubject.next(updatedGoals);

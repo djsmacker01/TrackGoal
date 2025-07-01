@@ -1,4 +1,4 @@
-export type Category = 'Health' | 'Career' | 'Personal' | 'Financial' | 'Habits';
+export type Category = string;
 export type GoalType = 'binary' | 'numerical' | 'percentage';
 
 export interface Progress {
