@@ -387,6 +387,60 @@ export class GoalDetailComponent implements OnInit {
           { id: '3', title: 'Read 9 books', completed: false, dueDate: new Date('2024-09-30'), description: 'Complete 75% of your reading goal with 9 books finished.' },
           { id: '4', title: 'Read 12 books', completed: false, dueDate: new Date('2024-12-31'), description: 'Achieve your complete reading goal of 12 books for the year.' }
         ]
+      },
+      {
+        id: '3',
+        title: 'Save $5,000',
+        category: 'Financial',
+        progress: { percent: 40 },
+        nextMilestone: 'Reach $2,000 saved',
+        deadline: new Date('2024-06-30'),
+        status: 'active',
+        targetValue: 5000,
+        targetUnit: 'dollars',
+        description: 'Build financial security by saving $5,000 for emergency fund and future investments. This will provide a safety net and enable better financial planning.',
+        milestones: [
+          { id: '1', title: 'Save $1,000', completed: true, dueDate: new Date('2024-02-28'), description: 'Reach the first milestone of $1,000 saved for your emergency fund.' },
+          { id: '2', title: 'Save $2,000', completed: false, dueDate: new Date('2024-03-31'), description: 'Double your savings to $2,000, building a solid foundation.' },
+          { id: '3', title: 'Save $3,500', completed: false, dueDate: new Date('2024-05-31'), description: 'Reach 70% of your savings goal with $3,500 accumulated.' },
+          { id: '4', title: 'Save $5,000', completed: false, dueDate: new Date('2024-06-30'), description: 'Achieve your complete savings goal of $5,000 for financial security.' }
+        ]
+      },
+      {
+        id: '4',
+        title: 'Get a promotion',
+        category: 'Career',
+        progress: { percent: 20 },
+        nextMilestone: 'Complete leadership course',
+        deadline: new Date('2024-03-15'),
+        status: 'overdue',
+        targetValue: 1,
+        targetUnit: 'promotion',
+        description: 'Advance my career by securing a promotion to senior level. This involves developing leadership skills, taking on more responsibilities, and demonstrating value to the organization.',
+        milestones: [
+          { id: '1', title: 'Complete leadership course', completed: false, dueDate: new Date('2024-02-15'), description: 'Finish the required leadership development program to qualify for promotion.' },
+          { id: '2', title: 'Update resume', completed: false, dueDate: new Date('2024-02-28'), description: 'Revise and enhance your resume to highlight recent achievements and skills.' },
+          { id: '3', title: 'Apply for positions', completed: false, dueDate: new Date('2024-03-10'), description: 'Submit applications for senior-level positions within the company.' },
+          { id: '4', title: 'Get promoted', completed: false, dueDate: new Date('2024-03-15'), description: 'Successfully secure the promotion to senior level position.' }
+        ]
+      },
+      {
+        id: '5',
+        title: 'Learn Spanish basics',
+        category: 'Personal',
+        progress: { percent: 100 },
+        nextMilestone: 'Goal completed!',
+        deadline: new Date('2024-01-31'),
+        status: 'completed',
+        targetValue: 1,
+        targetUnit: 'language level',
+        description: 'Learn basic Spanish conversation skills to enhance travel experiences and cultural understanding. Focus on practical phrases and everyday communication.',
+        milestones: [
+          { id: '1', title: 'Complete beginner course', completed: true, dueDate: new Date('2024-01-10'), description: 'Finish the introductory Spanish course covering basic grammar and vocabulary.' },
+          { id: '2', title: 'Practice for 30 days', completed: true, dueDate: new Date('2024-01-20'), description: 'Consistently practice Spanish for 30 consecutive days to build fluency.' },
+          { id: '3', title: 'Have first conversation', completed: true, dueDate: new Date('2024-01-25'), description: 'Successfully hold your first conversation in Spanish with a native speaker.' },
+          { id: '4', title: 'Master basic phrases', completed: true, dueDate: new Date('2024-01-31'), description: 'Achieve proficiency in essential Spanish phrases for everyday situations.' }
+        ]
       }
     ];
 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,6 +12,8 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatBadgeModule } from '@angular/material/badge';
 import { Router } from '@angular/router';
 import { Goal, Category, Progress } from '../../goal.model';
+import { GoalService } from '../../services/goal.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-goals-list',
@@ -244,7 +246,7 @@ import { Goal, Category, Progress } from '../../goal.model';
     </div>
   `
 })
-export class GoalsListComponent implements OnInit {
+export class GoalsListComponent implements OnInit, OnDestroy {
   allGoals: Goal[] = [];
   filteredGoals: Goal[] = [];
   selectedCategory: string = 'all';
@@ -267,14 +269,21 @@ export class GoalsListComponent implements OnInit {
     { value: 'overdue', label: 'Overdue', icon: 'warning' }
   ];
 
+  private subscription: Subscription;
+
   constructor(
-    private router: Router
+    private router: Router,
+    private goalService: GoalService
   ) {}
 
   ngOnInit() {
     this.loadGoals();
     this.initForm();
     this.applyFilters();
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   initForm() {
@@ -289,84 +298,11 @@ export class GoalsListComponent implements OnInit {
 
   loadGoals() {
     console.log('Loading goals...');
-    // Mock data - in real app this would come from a service
-    this.allGoals = [
-      {
-        id: '1',
-        title: 'Run 5km 3x/week',
-        category: 'Health',
-        progress: { percent: 70 },
-        nextMilestone: 'Complete 2 more runs',
-        deadline: new Date('2024-02-15'),
-        status: 'active',
-        milestones: [
-          { id: '1', title: 'Run 5km once', completed: true },
-          { id: '2', title: 'Run 5km twice', completed: true },
-          { id: '3', title: 'Run 5km 3 times', completed: false },
-          { id: '4', title: 'Maintain for 4 weeks', completed: false }
-        ]
-      },
-      {
-        id: '2',
-        title: 'Read 12 books',
-        category: 'Personal',
-        progress: { percent: 50 },
-        nextMilestone: 'Finish "Atomic Habits"',
-        deadline: new Date('2024-12-31'),
-        status: 'active',
-        milestones: [
-          { id: '1', title: 'Read 3 books', completed: true },
-          { id: '2', title: 'Read 6 books', completed: true },
-          { id: '3', title: 'Read 9 books', completed: false },
-          { id: '4', title: 'Read 12 books', completed: false }
-        ]
-      },
-      {
-        id: '3',
-        title: 'Save $5,000',
-        category: 'Financial',
-        progress: { percent: 40 },
-        nextMilestone: 'Reach $2,000 saved',
-        deadline: new Date('2024-06-30'),
-        status: 'active',
-        milestones: [
-          { id: '1', title: 'Save $1,000', completed: true },
-          { id: '2', title: 'Save $2,000', completed: false },
-          { id: '3', title: 'Save $3,500', completed: false },
-          { id: '4', title: 'Save $5,000', completed: false }
-        ]
-      },
-      {
-        id: '4',
-        title: 'Get a promotion',
-        category: 'Career',
-        progress: { percent: 20 },
-        nextMilestone: 'Complete leadership course',
-        deadline: new Date('2024-03-15'),
-        status: 'overdue',
-        milestones: [
-          { id: '1', title: 'Complete leadership course', completed: false },
-          { id: '2', title: 'Update resume', completed: false },
-          { id: '3', title: 'Apply for positions', completed: false },
-          { id: '4', title: 'Get promoted', completed: false }
-        ]
-      },
-      {
-        id: '5',
-        title: 'Learn Spanish basics',
-        category: 'Personal',
-        progress: { percent: 100 },
-        nextMilestone: 'Goal completed!',
-        deadline: new Date('2024-01-31'),
-        status: 'completed',
-        milestones: [
-          { id: '1', title: 'Complete beginner course', completed: true },
-          { id: '2', title: 'Practice for 30 days', completed: true },
-          { id: '3', title: 'Have first conversation', completed: true },
-          { id: '4', title: 'Master basic phrases', completed: true }
-        ]
-      }
-    ];
+    this.subscription = this.goalService.getAllGoals().subscribe(goals => {
+      this.allGoals = goals;
+      console.log('All goals loaded:', this.allGoals.length);
+      console.log('Goals with IDs 3, 4, 5:', this.allGoals.filter(g => ['3', '4', '5'].includes(g.id)));
+    });
   }
 
   selectCategory(category: string) {
@@ -404,10 +340,26 @@ export class GoalsListComponent implements OnInit {
       const searchMatch = !this.searchTerm || 
         goal.title.toLowerCase().includes(this.searchTerm.toLowerCase());
       
-      return categoryMatch && statusMatch && searchMatch;
+      const isIncluded = categoryMatch && statusMatch && searchMatch;
+      
+      // Debug logging for goals 3, 4, 5
+      if (['3', '4', '5'].includes(goal.id)) {
+        console.log(`Goal ${goal.id} (${goal.title}):`, {
+          categoryMatch,
+          statusMatch,
+          searchMatch,
+          isIncluded,
+          goalStatus,
+          selectedCategory: this.selectedCategory,
+          selectedStatus: this.selectedStatus
+        });
+      }
+      
+      return isIncluded;
     });
 
     console.log('Filtered goals:', this.filteredGoals.length);
+    console.log('Goals 3, 4, 5 in filtered results:', this.filteredGoals.filter(g => ['3', '4', '5'].includes(g.id)).map(g => g.id));
   }
 
   getGoalStatus(goal: Goal): string {
@@ -474,12 +426,16 @@ export class GoalsListComponent implements OnInit {
   }
 
   getCategoryCount(category: string): number {
-    if (category === 'all') return this.allGoals.length;
+    if (category === 'all') {
+      return this.allGoals.length;
+    }
     return this.allGoals.filter(goal => goal.category === category).length;
   }
 
   getStatusCount(status: string): number {
-    if (status === 'all') return this.allGoals.length;
+    if (status === 'all') {
+      return this.allGoals.length;
+    }
     return this.allGoals.filter(goal => this.getGoalStatus(goal) === status).length;
   }
 
@@ -508,7 +464,11 @@ export class GoalsListComponent implements OnInit {
 
   editGoal(goal: Goal) {
     console.log('Edit goal:', goal);
-    // Navigate to edit goal page
+    if (goal.id) {
+      this.router.navigate(['/edit-goal', goal.id]);
+    } else {
+      console.error('Goal ID is missing for editing:', goal);
+    }
   }
 
   markComplete(goal: Goal) {
@@ -516,16 +476,37 @@ export class GoalsListComponent implements OnInit {
     goal.progress.percent = 100;
     goal.status = 'completed';
     this.applyFilters();
+    // Show success notification
+    console.log(`Goal "${goal.title}" marked as completed!`);
   }
 
   duplicateGoal(goal: Goal) {
     console.log('Duplicate goal:', goal);
-    // Create a copy of the goal
+    // Create a copy of the goal with a new ID
+    const duplicatedGoal: Goal = {
+      ...goal,
+      id: (this.allGoals.length + 1).toString(),
+      title: `${goal.title} (Copy)`,
+      progress: { percent: 0 },
+      status: 'active',
+      milestones: goal.milestones.map(milestone => ({
+        ...milestone,
+        id: (Math.random() * 1000).toString(),
+        completed: false
+      }))
+    };
+    
+    this.allGoals.push(duplicatedGoal);
+    this.applyFilters();
+    console.log(`Goal "${goal.title}" duplicated successfully!`);
   }
 
   archiveGoal(goal: Goal) {
     console.log('Archive goal:', goal);
-    // Archive the goal
+    // Mark goal as archived (you could add an archived property to the Goal interface)
+    goal.status = 'archived';
+    this.applyFilters();
+    console.log(`Goal "${goal.title}" archived successfully!`);
   }
 
   deleteGoal(goal: Goal) {
@@ -533,6 +514,7 @@ export class GoalsListComponent implements OnInit {
     // Remove the goal from the list
     this.allGoals = this.allGoals.filter(g => g.id !== goal.id);
     this.applyFilters();
+    console.log(`Goal "${goal.title}" deleted successfully!`);
   }
 
   navigateToAddGoal() {
