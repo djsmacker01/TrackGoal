@@ -1,0 +1,181 @@
+.dialog-container {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  min-width: 400px;
+  max-width: 500px;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 24px 0 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  margin: -24px -24px 0 -24px;
+  padding: 24px;
+
+  h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    background: linear-gradient(45deg, #fff, #f0f0f0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .close-btn {
+    color: rgba(255, 255, 255, 0.8);
+    transition: all 0.3s ease;
+
+    &:hover {
+      color: white;
+      transform: scale(1.1);
+      background: rgba(255, 255, 255, 0.1);
+    }
+  }
+}
+
+.dialog-content {
+  padding: 24px;
+
+  .full-width {
+    width: 100%;
+    margin-bottom: 16px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .icon-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .icon-emoji {
+      font-size: 1.2rem;
+    }
+
+    .icon-name {
+      font-weight: 500;
+    }
+  }
+
+  .color-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .color-preview {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .color-name {
+      font-weight: 500;
+    }
+  }
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px 24px 24px;
+  background: rgba(248, 250, 252, 0.5);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+
+  .cancel-btn {
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+    background: white;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      transform: translateY(-1px);
+    }
+  }
+
+  .create-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 8px 24px;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    &:disabled {
+      background: #cbd5e1;
+      color: #64748b;
+      box-shadow: none;
+    }
+
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 600px) {
+  .dialog-container {
+    min-width: 90vw;
+    max-width: 90vw;
+    margin: 20px;
+  }
+
+  .dialog-header {
+    padding: 20px;
+
+    h2 {
+      font-size: 1.25rem;
+    }
+  }
+
+  .dialog-content {
+    padding: 20px;
+  }
+
+  .dialog-actions {
+    padding: 16px 20px 20px 20px;
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+// Animation for dialog appearance
+::ng-deep .mat-dialog-container {
+  animation: dialogSlideIn 0.3s ease-out;
+}
+
+@keyframes dialogSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+} 
