@@ -1,0 +1,721 @@
+.update-progress-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+// Header Styles
+.page-header {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  
+  .header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    
+    .back-btn {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateX(-2px);
+      }
+    }
+    
+    .header-text {
+      flex: 1;
+      
+      .page-title {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      
+      .page-subtitle {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.9rem;
+        margin: 0.25rem 0 0 0;
+        font-weight: 400;
+      }
+    }
+  }
+}
+
+// Main Content
+.main-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  display: grid;
+  gap: 2rem;
+  
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  
+  @media (min-width: 1024px) {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+// Goal Context Section
+.goal-context-section {
+  @media (min-width: 768px) {
+    grid-column: 1 / -1;
+  }
+  
+  .goal-context-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+    
+    .goal-summary {
+      padding: 1.5rem;
+      
+      .goal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1.5rem;
+        
+        .goal-info {
+          flex: 1;
+          
+          .goal-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0 0 0.5rem 0;
+            line-height: 1.3;
+          }
+          
+          .category-chip {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 500;
+            border-radius: 20px;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.8rem;
+            
+            .chip-icon {
+              margin-right: 0.25rem;
+              font-size: 0.9rem;
+            }
+          }
+        }
+        
+        .goal-progress {
+          .progress-circle {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+            .progress-text {
+              position: absolute;
+              font-size: 0.8rem;
+              font-weight: 700;
+              color: #1f2937;
+            }
+          }
+        }
+      }
+      
+      .goal-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 1rem;
+        
+        .stat-item {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 0.85rem;
+          color: #6b7280;
+          font-weight: 500;
+          
+          mat-icon {
+            font-size: 1rem;
+            color: #667eea;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Form Section
+.progress-form-section {
+  @media (min-width: 768px) {
+    grid-column: 1 / 2;
+  }
+  
+  .form-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    height: fit-content;
+    
+    .card-header {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      padding: 1.5rem;
+      color: white;
+      
+      .card-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        
+        mat-icon {
+          font-size: 1.2rem;
+        }
+      }
+    }
+    
+    .progress-form {
+      padding: 1.5rem;
+      
+      .section-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin: 0 0 1rem 0;
+      }
+      
+      .section-description {
+        font-size: 0.85rem;
+        color: #6b7280;
+        margin: 0 0 1rem 0;
+      }
+      
+      .form-field {
+        width: 100%;
+        margin-bottom: 1.5rem;
+        
+        ::ng-deep .mat-mdc-form-field {
+          .mat-mdc-text-field-wrapper {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            transition: all 0.3s ease;
+            
+            &:hover {
+              border-color: rgba(16, 185, 129, 0.4);
+            }
+            
+            &.mat-focused {
+              border-color: #10b981;
+              box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+            }
+          }
+          
+          .mat-mdc-form-field-label {
+            color: #6b7280;
+            font-weight: 500;
+          }
+          
+          .mat-mdc-input-element {
+            color: #1f2937;
+            font-weight: 500;
+          }
+        }
+      }
+      
+      // Binary Progress
+      .binary-progress {
+        .completion-toggle {
+          padding: 1rem;
+          background: rgba(16, 185, 129, 0.05);
+          border: 1px solid rgba(16, 185, 129, 0.2);
+          border-radius: 12px;
+          margin-bottom: 1.5rem;
+          
+          .completion-checkbox {
+            ::ng-deep .mdc-checkbox {
+              .mdc-checkbox__background {
+                border-color: #10b981;
+              }
+              
+              .mdc-checkbox__checkmark {
+                color: white;
+              }
+            }
+          }
+          
+          .toggle-description {
+            margin-top: 0.5rem;
+            
+            p {
+              font-size: 0.85rem;
+              color: #6b7280;
+              margin: 0;
+            }
+          }
+        }
+      }
+      
+      // Numerical Progress
+      .numerical-progress {
+        .current-value-input {
+          .target-reference {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            
+            .target-label {
+              color: #6b7280;
+            }
+            
+            .current-label {
+              color: #10b981;
+              font-weight: 500;
+            }
+          }
+        }
+      }
+      
+      // Percentage Progress
+      .percentage-progress {
+        .percentage-input {
+          padding: 1rem;
+          background: rgba(16, 185, 129, 0.05);
+          border: 1px solid rgba(16, 185, 129, 0.2);
+          border-radius: 12px;
+          margin-bottom: 1.5rem;
+          
+          .percentage-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #1f2937;
+            margin-bottom: 1rem;
+          }
+          
+          .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+            
+            .progress-slider {
+              flex: 1;
+              
+              ::ng-deep .mdc-slider {
+                .mdc-slider__track {
+                  background-color: rgba(16, 185, 129, 0.2);
+                }
+                
+                .mdc-slider__track--active {
+                  background-color: #10b981;
+                }
+                
+                .mdc-slider__thumb {
+                  background-color: #10b981;
+                  border-color: #10b981;
+                }
+              }
+            }
+            
+            .percentage-display {
+              .percentage-value {
+                font-size: 1.2rem;
+                font-weight: 700;
+                color: #10b981;
+                min-width: 3rem;
+                text-align: center;
+              }
+            }
+          }
+          
+          .percentage-range {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #9ca3af;
+          }
+        }
+      }
+      
+      // Milestones Section
+      .milestones-section {
+        margin-top: 2rem;
+        
+        .milestones-list {
+          .milestone-item {
+            margin-bottom: 0.75rem;
+            
+            .milestone-checkbox {
+              width: 100%;
+              
+              ::ng-deep .mdc-checkbox {
+                .mdc-checkbox__background {
+                  border-color: #667eea;
+                }
+                
+                .mdc-checkbox__checkmark {
+                  color: white;
+                }
+              }
+              
+              .milestone-info {
+                display: flex;
+                flex-direction: column;
+                margin-left: 0.5rem;
+                
+                .milestone-title {
+                  font-weight: 500;
+                  color: #1f2937;
+                }
+                
+                .milestone-due {
+                  font-size: 0.75rem;
+                  color: #9ca3af;
+                }
+              }
+            }
+          }
+        }
+      }
+      
+      .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        
+        .cancel-btn {
+          flex: 1;
+          background: rgba(107, 114, 128, 0.1);
+          color: #6b7280;
+          border: 1px solid rgba(107, 114, 128, 0.2);
+          border-radius: 12px;
+          padding: 0.75rem 1.5rem;
+          font-weight: 500;
+          transition: all 0.3s ease;
+          
+          &:hover {
+            background: rgba(107, 114, 128, 0.2);
+            transform: translateY(-1px);
+          }
+          
+          mat-icon {
+            margin-right: 0.5rem;
+          }
+        }
+        
+        .save-btn {
+          flex: 2;
+          background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+          color: white;
+          border: none;
+          border-radius: 12px;
+          padding: 0.75rem 1.5rem;
+          font-weight: 600;
+          transition: all 0.3s ease;
+          
+          &:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+          }
+          
+          &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+          }
+          
+          mat-icon {
+            margin-right: 0.5rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Preview Section
+.preview-section {
+  @media (min-width: 768px) {
+    grid-column: 2 / 3;
+  }
+  
+  .preview-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    height: fit-content;
+    
+    .card-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 1.5rem;
+      color: white;
+      
+      .card-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        
+        mat-icon {
+          font-size: 1.2rem;
+        }
+      }
+    }
+    
+    .preview-content {
+      padding: 1.5rem;
+      
+      .progress-comparison {
+        margin-bottom: 1.5rem;
+        
+        .comparison-item {
+          margin-bottom: 1rem;
+          
+          .comparison-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+          }
+          
+          .progress-bar-container {
+            position: relative;
+            
+            .progress-bar {
+              height: 8px;
+              border-radius: 4px;
+              
+              &.current-progress {
+                ::ng-deep .mdc-linear-progress__bar-inner {
+                  border-color: #6b7280;
+                }
+              }
+              
+              &.new-progress {
+                ::ng-deep .mdc-linear-progress__bar-inner {
+                  border-color: #10b981;
+                }
+              }
+            }
+            
+            .progress-text {
+              position: absolute;
+              right: 0;
+              top: -20px;
+              font-size: 0.75rem;
+              font-weight: 600;
+              color: #1f2937;
+            }
+          }
+        }
+      }
+      
+      .celebration-message {
+        text-align: center;
+        padding: 1.5rem;
+        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        border-radius: 12px;
+        color: white;
+        margin-bottom: 1.5rem;
+        
+        .celebration-icon {
+          font-size: 2rem;
+          margin-bottom: 0.5rem;
+        }
+        
+        h4 {
+          margin: 0 0 0.5rem 0;
+          font-size: 1.1rem;
+          font-weight: 600;
+        }
+        
+        p {
+          margin: 0;
+          font-size: 0.9rem;
+          opacity: 0.9;
+        }
+      }
+      
+      .milestone-preview {
+        margin-bottom: 1.5rem;
+        
+        h4 {
+          font-size: 0.9rem;
+          font-weight: 600;
+          color: #1f2937;
+          margin: 0 0 0.75rem 0;
+        }
+        
+        .milestone-preview-list {
+          .milestone-preview-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            
+            mat-icon {
+              color: #10b981;
+              font-size: 1rem;
+            }
+            
+            span {
+              font-size: 0.85rem;
+              color: #1f2937;
+              font-weight: 500;
+            }
+          }
+        }
+      }
+      
+      .no-changes {
+        text-align: center;
+        padding: 2rem;
+        color: #9ca3af;
+        
+        mat-icon {
+          font-size: 2rem;
+          margin-bottom: 0.5rem;
+          opacity: 0.5;
+        }
+        
+        p {
+          margin: 0;
+          font-size: 0.9rem;
+        }
+      }
+    }
+  }
+}
+
+// Loading State
+.loading-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh;
+  
+  .loading-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    padding: 2rem;
+    
+    .loading-content {
+      text-align: center;
+      
+      .loading-spinner {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        animation: spin 2s linear infinite;
+      }
+      
+      h3 {
+        color: #6b7280;
+        margin: 0;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Responsive Design
+@media (max-width: 767px) {
+  .main-content {
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+  
+  .page-header .header-content {
+    padding: 0 1rem;
+    
+    .header-text .page-title {
+      font-size: 1.25rem;
+    }
+  }
+  
+  .goal-context-card .goal-summary {
+    padding: 1rem;
+    
+    .goal-header {
+      flex-direction: column;
+      gap: 1rem;
+      
+      .goal-progress {
+        align-self: center;
+      }
+    }
+    
+    .goal-stats {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+  }
+  
+  .form-card .progress-form {
+    padding: 1rem;
+    
+    .form-actions {
+      flex-direction: column;
+      
+      .cancel-btn,
+      .save-btn {
+        flex: none;
+      }
+    }
+  }
+  
+  .preview-card .preview-content {
+    padding: 1rem;
+  }
+} 

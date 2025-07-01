@@ -15,6 +15,8 @@ import { Goal, Category, Progress, Milestone } from '../../goal.model';
 import { UpdateHistoryComponent } from '../update-history/update-history.component';
 import { UpdateHistoryService } from '../../services/update-history.service';
 import { UpdateHistory } from '../../models/update-history.model';
+import { NotificationService } from '../../services/notification.service';
+import { DeleteConfirmationComponent } from '../delete-confirmation/delete-confirmation.component';
 
 interface ProgressUpdate {
   id: string;
@@ -50,7 +52,8 @@ interface GoalStatistics {
     MatDividerModule,
     MatBadgeModule,
     MatTooltipModule,
-    UpdateHistoryComponent
+    UpdateHistoryComponent,
+    DeleteConfirmationComponent
   ],
   styleUrls: ['./goal-detail.component.scss'],
   template: `
@@ -315,17 +318,28 @@ interface GoalStatistics {
         </div>
       </mat-card>
     </div>
+
+    <!-- Delete Confirmation Dialog -->
+    <app-delete-confirmation
+      *ngIf="showDeleteConfirmation"
+      [goalTitle]="goal?.title || ''"
+      [goalDetails]="getGoalDetailsForDelete()"
+      (confirmed)="confirmDelete()"
+      (cancelled)="cancelDelete()">
+    </app-delete-confirmation>
   `
 })
 export class GoalDetailComponent implements OnInit {
   goal: Goal | null = null;
   recentActivity: ProgressUpdate[] = [];
   goalUpdateHistory: UpdateHistory | null = null;
+  showDeleteConfirmation = false;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private updateHistoryService: UpdateHistoryService
+    private updateHistoryService: UpdateHistoryService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit() {
@@ -563,15 +577,42 @@ export class GoalDetailComponent implements OnInit {
   }
 
   updateProgress() {
-    console.log('Update progress for goal:', this.goal);
-    // Open progress update dialog
+    if (this.goal) {
+      this.router.navigate(['/update-progress', this.goal.id]);
+    }
   }
 
   deleteGoal() {
-    if (confirm('Are you sure you want to delete this goal?')) {
-      console.log('Delete goal:', this.goal);
-      this.router.navigate(['/goals-list']);
+    this.showDeleteConfirmation = true;
+  }
+
+  confirmDelete() {
+    if (this.goal) {
+      // Simulate delete operation
+      setTimeout(() => {
+        this.notificationService.success(
+          'Goal Deleted', 
+          `"${this.goal!.title}" has been successfully deleted.`, 
+          5000
+        );
+        this.showDeleteConfirmation = false;
+        this.router.navigate(['/goals-list']);
+      }, 500);
     }
+  }
+
+  cancelDelete() {
+    this.showDeleteConfirmation = false;
+  }
+
+  getGoalDetailsForDelete() {
+    if (!this.goal) return undefined;
+    
+    return {
+      milestonesCount: this.goal.milestones.length,
+      progressPercent: this.goal.progress.percent,
+      daysActive: this.getDaysSinceCreated()
+    };
   }
 
   editMilestone(milestone: Milestone) {

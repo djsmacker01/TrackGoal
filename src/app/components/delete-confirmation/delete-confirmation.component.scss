@@ -1,0 +1,218 @@
+.delete-confirmation-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.delete-confirmation-dialog {
+  width: 90%;
+  max-width: 500px;
+  animation: slideIn 0.3s ease-out;
+}
+
+.confirmation-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  
+  .card-header {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    padding: 2rem 1.5rem 1.5rem;
+    text-align: center;
+    color: white;
+    
+    .warning-icon {
+      margin-bottom: 1rem;
+      
+      mat-icon {
+        font-size: 3rem;
+        width: 3rem;
+        height: 3rem;
+        color: rgba(255, 255, 255, 0.9);
+      }
+    }
+    
+    .dialog-title {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+  }
+  
+  .card-content {
+    padding: 1.5rem;
+    
+    .confirmation-message {
+      font-size: 1.1rem;
+      color: #1f2937;
+      margin: 0 0 1rem 0;
+      line-height: 1.5;
+      text-align: center;
+      
+      strong {
+        color: #dc2626;
+        font-weight: 600;
+      }
+    }
+    
+    .warning-message {
+      font-size: 0.9rem;
+      color: #6b7280;
+      margin: 0 0 1.5rem 0;
+      line-height: 1.4;
+      text-align: center;
+      padding: 1rem;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: 12px;
+    }
+    
+    .goal-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+      
+      .summary-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem;
+        background: rgba(107, 114, 128, 0.1);
+        border-radius: 8px;
+        font-size: 0.85rem;
+        color: #6b7280;
+        
+        mat-icon {
+          font-size: 1rem;
+          color: #6b7280;
+        }
+        
+        span {
+          font-weight: 500;
+        }
+      }
+    }
+  }
+  
+  .card-actions {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    
+    .cancel-btn {
+      flex: 1;
+      background: rgba(107, 114, 128, 0.1);
+      color: #6b7280;
+      border: 1px solid rgba(107, 114, 128, 0.2);
+      border-radius: 12px;
+      padding: 0.75rem 1.5rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background: rgba(107, 114, 128, 0.2);
+        transform: translateY(-1px);
+      }
+      
+      mat-icon {
+        margin-right: 0.5rem;
+      }
+    }
+    
+    .delete-btn {
+      flex: 1;
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 0.75rem 1.5rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+      }
+      
+      mat-icon {
+        margin-right: 0.5rem;
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .delete-confirmation-dialog {
+    width: 95%;
+    margin: 1rem;
+  }
+  
+  .confirmation-card {
+    .card-header {
+      padding: 1.5rem 1rem 1rem;
+      
+      .dialog-title {
+        font-size: 1.25rem;
+      }
+    }
+    
+    .card-content {
+      padding: 1rem;
+      
+      .confirmation-message {
+        font-size: 1rem;
+      }
+      
+      .goal-summary {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+    }
+    
+    .card-actions {
+      padding: 1rem;
+      flex-direction: column;
+      
+      .cancel-btn,
+      .delete-btn {
+        flex: none;
+      }
+    }
+  }
+} 
