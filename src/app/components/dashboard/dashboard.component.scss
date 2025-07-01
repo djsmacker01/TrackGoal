@@ -245,8 +245,9 @@
       &.stat-warning::before { background: var(--gradient-warning); }
       &.stat-info::before { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
       &.stat-analytics::before { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); }
+      &.stat-categories::before { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
 
-      &.stat-analytics {
+      &.stat-analytics, &.stat-categories {
         cursor: pointer;
         transition: all 0.3s ease;
 

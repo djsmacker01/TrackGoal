@@ -336,7 +336,7 @@ export class GoalDetailComponent implements OnInit, OnDestroy {
   recentActivity: ProgressUpdate[] = [];
   goalUpdateHistory: UpdateHistory | null = null;
   showDeleteConfirmation = false;
-  private subscription: Subscription | undefined;
+  private subscription!: Subscription;
 
   constructor(
     private route: ActivatedRoute,

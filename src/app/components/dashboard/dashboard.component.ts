@@ -28,6 +28,9 @@ import { Subscription } from 'rxjs';
             <p class="app-subtitle">Transform your dreams into achievements</p>
           </div>
           <nav class="nav">
+            <button mat-icon-button class="nav-btn" aria-label="Categories" (click)="navigateToCategories()">
+              <mat-icon>category</mat-icon>
+            </button>
             <button mat-icon-button class="nav-btn" aria-label="Analytics" (click)="navigateToAnalytics()">
               <mat-icon>analytics</mat-icon>
             </button>
@@ -111,6 +114,14 @@ import { Subscription } from 'rxjs';
                 <div class="stat-value">View</div>
                 <div class="stat-label">Analytics</div>
                 <div class="stat-trend positive">Detailed insights</div>
+              </div>
+            </mat-card>
+            <mat-card class="stat-card stat-categories" (click)="navigateToCategories()">
+              <div class="stat-icon">📂</div>
+              <div class="stat-content">
+                <div class="stat-value">View</div>
+                <div class="stat-label">Categories</div>
+                <div class="stat-trend positive">Organized view</div>
               </div>
             </mat-card>
           </div>
@@ -217,8 +228,8 @@ import { Subscription } from 'rxjs';
   `
 })
 export class DashboardComponent implements OnInit, OnDestroy {
-  private goalsSubscription: Subscription;
-  private recentActivitySubscription: Subscription;
+  private goalsSubscription!: Subscription;
+  private recentActivitySubscription!: Subscription;
 
   constructor(private router: Router, private goalService: GoalService) {}
   
@@ -286,5 +297,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   navigateToAnalytics() {
     this.router.navigate(['/analytics']);
+  }
+
+  navigateToCategories() {
+    this.router.navigate(['/categories']);
   }
 } 

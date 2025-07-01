@@ -10,8 +10,9 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { NotificationService } from '../../services/notification.service';
+import { CategoryService, CategoryConfig } from '../../services/category.service';
 import { Category } from '../../goal.model';
 
 @Component({
@@ -79,10 +80,10 @@ import { Category } from '../../goal.model';
               <div class="category-grid">
                 <div *ngFor="let category of categories" 
                      class="category-option" 
-                     [ngClass]="{ 'selected': goalForm.get('category')?.value === category.value }"
-                     (click)="selectCategory(category.value)">
+                     [ngClass]="{ 'selected': goalForm.get('category')?.value === category.name }"
+                     (click)="selectCategory(category.name)">
                   <div class="category-icon">{{ category.icon }}</div>
-                  <span class="category-name">{{ category.label }}</span>
+                  <span class="category-name">{{ category.name }}</span>
                 </div>
               </div>
               <mat-error *ngIf="goalForm.get('category')?.hasError('required') && goalForm.get('category')?.touched">
@@ -164,14 +165,7 @@ import { Category } from '../../goal.model';
 export class AddGoalComponent implements OnInit {
   goalForm!: FormGroup;
   isSubmitting = false;
-
-  categories = [
-    { value: 'Health', label: 'Health', icon: '🏃‍♂️' },
-    { value: 'Career', label: 'Career', icon: '💼' },
-    { value: 'Personal', label: 'Personal', icon: '📚' },
-    { value: 'Financial', label: 'Financial', icon: '💰' },
-    { value: 'Habits', label: 'Habits', icon: '🔄' }
-  ];
+  categories: CategoryConfig[] = [];
 
   goalTypes = [
     { value: 'binary', label: 'Binary (Complete/Incomplete)', icon: 'check_circle' },
@@ -182,11 +176,18 @@ export class AddGoalComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private notificationService: NotificationService
+    private route: ActivatedRoute,
+    private notificationService: NotificationService,
+    private categoryService: CategoryService
   ) {}
 
   ngOnInit() {
+    this.loadCategories();
     this.initForm();
+  }
+
+  loadCategories() {
+    this.categories = this.categoryService.getCategories();
   }
 
   initForm() {
@@ -200,17 +201,11 @@ export class AddGoalComponent implements OnInit {
       deadline: ['', [Validators.required, this.futureDateValidator()]]
     });
 
-    // Watch goal type changes to show/hide target inputs
-    this.goalForm.get('goalType')?.valueChanges.subscribe(type => {
-      if (type === 'numerical' || type === 'percentage') {
-        this.goalForm.get('targetValue')?.setValidators([Validators.required, Validators.min(1)]);
-        this.goalForm.get('targetUnit')?.setValidators([Validators.required]);
-      } else {
-        this.goalForm.get('targetValue')?.clearValidators();
-        this.goalForm.get('targetUnit')?.clearValidators();
+    // Pre-select category if passed via query params
+    this.route.queryParams.subscribe(params => {
+      if (params['category']) {
+        this.goalForm.patchValue({ category: params['category'] });
       }
-      this.goalForm.get('targetValue')?.updateValueAndValidity();
-      this.goalForm.get('targetUnit')?.updateValueAndValidity();
     });
   }
 
@@ -219,8 +214,7 @@ export class AddGoalComponent implements OnInit {
   }
 
   isNumericalGoal(): boolean {
-    const goalType = this.goalForm.get('goalType')?.value;
-    return goalType === 'numerical' || goalType === 'percentage';
+    return this.goalForm.get('goalType')?.value === 'numerical';
   }
 
   futureDateValidator() {
@@ -228,7 +222,14 @@ export class AddGoalComponent implements OnInit {
       if (!control.value) {
         return null;
       }
-      // Allow any date selection - removed future date restriction
+      
+      const selectedDate = new Date(control.value);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      if (selectedDate < today) {
+        return { pastDate: true };
+      }
       return null;
     };
   }
@@ -239,11 +240,10 @@ export class AddGoalComponent implements OnInit {
       
       // Simulate API call
       setTimeout(() => {
-        console.log('Goal data:', this.goalForm.value);
+        this.notificationService.showSuccess('Goal created successfully!');
+        this.router.navigate(['/dashboard']);
         this.isSubmitting = false;
-        this.notificationService.success('Goal Created', 'Your new goal has been successfully created!', 5000);
-        this.router.navigate(['/']);
-      }, 1500);
+      }, 1000);
     } else {
       this.markFormGroupTouched();
     }
@@ -257,6 +257,6 @@ export class AddGoalComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/']);
+    this.router.navigate(['/dashboard']);
   }
 } 
