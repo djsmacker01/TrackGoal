@@ -8,6 +8,8 @@ import { AddMilestoneComponent } from './components/add-milestone/add-milestone.
 import { UpdateProgressComponent } from './components/update-progress/update-progress.component';
 import { AnalyticsComponent } from './components/analytics/analytics.component';
 import { CategoriesComponent } from './components/categories/categories.component';
+import { SignupComponent } from './components/signup/signup.component';
+import { LoginComponent } from './components/login/login.component';
 
 export const routes: Routes = [
   { path: '', component: DashboardComponent },
@@ -19,4 +21,6 @@ export const routes: Routes = [
   { path: 'update-progress/:goalId', component: UpdateProgressComponent },
   { path: 'analytics', component: AnalyticsComponent },
   { path: 'categories', component: CategoriesComponent },
+  { path: 'signup', component: SignupComponent },
+  { path: 'login', component: LoginComponent },
 ];

@@ -241,7 +241,7 @@ export class AddGoalComponent implements OnInit {
       // Simulate API call
       setTimeout(() => {
         this.notificationService.success('Goal Created', 'Your new goal has been successfully created!', 3000);
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/']);
         this.isSubmitting = false;
       }, 1000);
     } else {
@@ -257,6 +257,6 @@ export class AddGoalComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/dashboard']);
+    this.router.navigate(['/']);
   }
 } 
