@@ -61,8 +61,13 @@ interface CategoryStats {
       <header class="page-header">
         <div class="header-content">
           <div class="header-left">
-            <h1 class="page-title">Categories</h1>
-            <p class="page-subtitle">Organize and manage your goals by category</p>
+            <button mat-icon-button class="back-btn" (click)="goToDashboard()" aria-label="Return to dashboard">
+              <mat-icon>arrow_back</mat-icon>
+            </button>
+            <div class="header-text">
+              <h1 class="page-title">Categories</h1>
+              <p class="page-subtitle">Organize and manage your goals by category</p>
+            </div>
           </div>
           <div class="header-actions">
             <mat-form-field appearance="outline" class="search-field">
@@ -451,5 +456,9 @@ export class CategoriesComponent implements OnInit, OnDestroy {
         }
       }
     });
+  }
+
+  goToDashboard() {
+    this.router.navigate(['/']);
   }
 } 
