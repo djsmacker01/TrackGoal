@@ -176,7 +176,7 @@ export interface SupabaseSignUpData {
             <!-- Sign In Link -->
             <div class="signin-link">
               <p>Already have an account? 
-                <a routerLink="/signin" class="link">Sign In</a>
+                <a routerLink="/login" class="link">Sign In</a>
               </p>
             </div>
           </form>

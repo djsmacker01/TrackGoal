@@ -95,6 +95,7 @@
         
         .mat-mdc-input-element {
           color: white;
+          font-size: 16px; // Prevents zoom on iOS
           
           &::placeholder {
             color: rgba(255, 255, 255, 0.6);
@@ -219,6 +220,7 @@
       backdrop-filter: blur(10px);
       transition: all 0.3s ease;
       margin-bottom: 24px;
+      min-height: 56px; // Better touch target
       
       &:hover:not(:disabled) {
         transform: translateY(-2px);
@@ -410,6 +412,12 @@
         grid-template-columns: 1fr;
         gap: 0;
       }
+      
+      .checkbox-section {
+        .checkbox-field {
+          font-size: 0.9rem;
+        }
+      }
     }
   }
   
@@ -432,6 +440,32 @@
       .page-title {
         font-size: 1.8rem;
       }
+      
+      .back-btn {
+        width: 40px;
+        height: 40px;
+        
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
+      }
+    }
+    
+    .signup-form {
+      .password-strength {
+        .strength-text {
+          font-size: 0.8rem;
+        }
+      }
+      
+      .checkbox-section {
+        .checkbox-field {
+          font-size: 0.85rem;
+          margin-bottom: 12px;
+        }
+      }
     }
   }
   
@@ -443,6 +477,108 @@
       
       .welcome-title {
         font-size: 1.8rem;
+      }
+      
+      .features-list {
+        .feature-item {
+          padding: 10px 12px;
+          
+          span {
+            font-size: 0.85rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 360px) {
+  .form-section {
+    .form-content {
+      padding: 15px 12px;
+    }
+    
+    .form-header {
+      .page-title {
+        font-size: 1.6rem;
+      }
+      
+      .page-subtitle {
+        font-size: 0.9rem;
+      }
+    }
+    
+    .signup-form {
+      .checkbox-section {
+        .checkbox-field {
+          font-size: 0.8rem;
+        }
+      }
+    }
+  }
+  
+  .welcome-section {
+    padding: 15px;
+    
+    .welcome-content {
+      .welcome-icon {
+        font-size: 2.5rem;
+      }
+      
+      .welcome-title {
+        font-size: 1.6rem;
+      }
+      
+      .welcome-subtitle {
+        font-size: 0.9rem;
+      }
+    }
+  }
+}
+
+// Landscape orientation on mobile
+@media (max-height: 500px) and (orientation: landscape) {
+  .signup-container {
+    min-height: auto;
+  }
+  
+  .form-section {
+    min-height: auto;
+    padding: 15px 20px;
+    
+    .form-content {
+      padding: 20px;
+    }
+  }
+  
+  .welcome-section {
+    padding: 15px;
+    
+    .welcome-content {
+      .welcome-icon {
+        font-size: 2rem;
+        margin-bottom: 12px;
+      }
+      
+      .welcome-title {
+        font-size: 1.5rem;
+        margin-bottom: 8px;
+      }
+      
+      .welcome-subtitle {
+        font-size: 0.9rem;
+        margin-bottom: 16px;
+      }
+      
+      .features-list {
+        .feature-item {
+          padding: 8px 12px;
+          margin-bottom: 8px;
+          
+          span {
+            font-size: 0.8rem;
+          }
+        }
       }
     }
   }
