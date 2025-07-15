@@ -13,6 +13,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Goal, Milestone } from '../../goal.model';
 import { NotificationService } from '../../services/notification.service';
+import { GoalService } from '../../services/goal.service';
 
 @Component({
   selector: 'app-add-milestone',
@@ -90,14 +91,14 @@ import { NotificationService } from '../../services/notification.service';
                         </linearGradient>
                       </defs>
                     </svg>
-                    <span class="progress-text">{{ goal.progress.percent }}%</span>
+                    <span class="progress-text">{{ goal?.progress?.percent || 0 }}%</span>
                   </div>
                 </div>
               </div>
               <div class="goal-stats">
                 <div class="stat-item">
                   <mat-icon>flag</mat-icon>
-                  <span>{{ goal.milestones.length }} milestones</span>
+                  <span>{{ goal?.milestones?.length || 0 }} milestones</span>
                 </div>
                 <div class="stat-item">
                   <mat-icon>check_circle</mat-icon>
@@ -249,7 +250,8 @@ export class AddMilestoneComponent implements OnInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private goalService: GoalService
   ) {}
 
   ngOnInit() {
@@ -260,51 +262,23 @@ export class AddMilestoneComponent implements OnInit {
   }
 
   loadGoal(goalId: string) {
-    // Mock data - in real app this would come from a service
-    const mockGoals: Goal[] = [
-      {
-        id: '1',
-        title: 'Run 5km 3x/week',
-        category: 'Health',
-        progress: { percent: 70 },
-        nextMilestone: 'Complete 2 more runs',
-        deadline: new Date('2024-02-15'),
-        status: 'active',
-        targetValue: 12,
-        targetUnit: 'runs',
-        description: 'Build endurance and improve cardiovascular health by running 5km three times per week. This will help me prepare for a half marathon later this year.',
-        milestones: [
-          { id: '1', title: 'Run 5km once', completed: true, dueDate: new Date('2024-01-15'), description: 'Complete your first 5km run to establish the baseline for your training program.' },
-          { id: '2', title: 'Run 5km twice', completed: true, dueDate: new Date('2024-01-22'), description: 'Run 5km twice in one week to build consistency and endurance.' },
-          { id: '3', title: 'Run 5km 3 times', completed: false, dueDate: new Date('2024-01-29'), description: 'Achieve the target frequency of running 5km three times per week.' },
-          { id: '4', title: 'Maintain for 4 weeks', completed: false, dueDate: new Date('2024-02-26'), description: 'Sustain the 3x/week running schedule for a full month to establish the habit.' }
-        ]
+    this.goalService.getGoal(goalId).subscribe({
+      next: (goal) => {
+        this.goal = goal;
+        if (this.goal) {
+          this.initForm();
+        }
       },
-      {
-        id: '2',
-        title: 'Read 12 books',
-        category: 'Personal',
-        progress: { percent: 50 },
-        nextMilestone: 'Finish "Atomic Habits"',
-        deadline: new Date('2024-12-31'),
-        status: 'active',
-        targetValue: 12,
-        targetUnit: 'books',
-        description: 'Expand knowledge and develop reading habit by completing 12 books this year. Focus on personal development and business books.',
-        milestones: [
-          { id: '1', title: 'Read 3 books', completed: true, dueDate: new Date('2024-03-31'), description: 'Complete the first quarter of your reading goal by finishing 3 books.' },
-          { id: '2', title: 'Read 6 books', completed: true, dueDate: new Date('2024-06-30'), description: 'Reach the halfway point of your annual reading challenge.' },
-          { id: '3', title: 'Read 9 books', completed: false, dueDate: new Date('2024-09-30'), description: 'Complete 75% of your reading goal with 9 books finished.' },
-          { id: '4', title: 'Read 12 books', completed: false, dueDate: new Date('2024-12-31'), description: 'Achieve your complete reading goal of 12 books for the year.' }
-        ]
+      error: (error) => {
+        console.error('Error loading goal:', error);
+        this.notificationService.error(
+          'Error', 
+          'Failed to load goal details. Please try again.', 
+          5000
+        );
+        this.router.navigate(['/goals-list']);
       }
-    ];
-
-    this.goal = mockGoals.find(g => g.id === goalId) || null;
-    
-    if (this.goal) {
-      this.initForm();
-    }
+    });
   }
 
   initForm() {
@@ -337,18 +311,20 @@ export class AddMilestoneComponent implements OnInit {
   }
 
   getProgressOffset(): string {
-    if (!this.goal) return '0';
+    if (!this.goal?.progress) return '0';
     const circumference = 2 * Math.PI * 25;
     const offset = circumference - (this.goal.progress.percent / 100) * circumference;
     return offset.toString();
   }
 
   getCompletedMilestones(): number {
-    if (!this.goal) return 0;
+    if (!this.goal?.milestones) return 0;
     return this.goal.milestones.filter(m => m.completed).length;
   }
 
-  getDaysRemaining(deadline: Date): string {
+  getDaysRemaining(deadline: string | undefined): string {
+    if (!deadline) return 'No deadline set';
+    
     const today = new Date();
     const deadlineDate = new Date(deadline);
     const diffTime = deadlineDate.getTime() - today.getTime();
@@ -367,7 +343,7 @@ export class AddMilestoneComponent implements OnInit {
   }
 
   getNextSequenceNumber(): number {
-    if (!this.goal) return 1;
+    if (!this.goal?.milestones) return 1;
     return this.goal.milestones.length + 1;
   }
 
@@ -378,30 +354,39 @@ export class AddMilestoneComponent implements OnInit {
       const formData = this.milestoneForm.value;
       
       // Create new milestone
-      const newMilestone: Milestone = {
-        id: this.generateId(),
+      const newMilestone: Omit<Milestone, 'id' | 'created_at' | 'updated_at'> = {
+        goal_id: this.goal.id,
         title: formData.title,
         description: formData.description || undefined,
         dueDate: formData.dueDate || undefined,
         completed: false
       };
       
-      // Add milestone to goal
-      this.goal.milestones.push(newMilestone);
-      
-      // Simulate API call
-      setTimeout(() => {
-        this.isSubmitting = false;
-        
-        this.notificationService.success(
-          'Milestone Added', 
-          `"${newMilestone.title}" has been added to your goal!`, 
-          5000
-        );
-        
-        // Navigate back to goal detail page
-        this.router.navigate(['/goal-detail', this.goal!.id]);
-      }, 1500);
+      // Add milestone to database
+      this.goalService.createMilestone(newMilestone).subscribe({
+        next: (createdMilestone) => {
+          this.isSubmitting = false;
+          
+          this.notificationService.success(
+            'Milestone Added', 
+            `"${createdMilestone.title}" has been added to your goal!`, 
+            5000
+          );
+          
+          // Navigate back to goal detail page
+          this.router.navigate(['/goal-detail', this.goal!.id]);
+        },
+        error: (error) => {
+          this.isSubmitting = false;
+          console.error('Error creating milestone:', error);
+          
+          this.notificationService.error(
+            'Error', 
+            'Failed to create milestone. Please try again.', 
+            5000
+          );
+        }
+      });
     } else {
       this.markFormGroupTouched();
     }
