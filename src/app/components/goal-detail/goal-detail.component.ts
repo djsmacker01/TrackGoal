@@ -109,7 +109,7 @@ interface GoalStatistics {
               <div class="circular-progress">
                 <div class="progress-ring" [ngClass]="'progress-' + goal.category.toLowerCase()">
                   <div class="progress-circle">
-                    <div class="progress-value">{{ goal.progress.percent }}%</div>
+                    <div class="progress-value">{{ goal?.progress?.percent || 0 }}%</div>
                     <div class="progress-label">Complete</div>
                   </div>
                   <svg class="progress-svg" viewBox="0 0 120 120">
@@ -193,7 +193,7 @@ interface GoalStatistics {
               <div class="stat-item">
                 <div class="stat-icon">🎯</div>
                 <div class="stat-content">
-                  <div class="stat-value">{{ getCompletedMilestones() }}/{{ goal.milestones.length }}</div>
+                  <div class="stat-value">{{ getCompletedMilestones() }}/{{ goal?.milestones?.length || 0 }}</div>
                   <div class="stat-label">Milestones</div>
                 </div>
               </div>
@@ -436,7 +436,7 @@ export class GoalDetailComponent implements OnInit, OnDestroy {
     if (this.goal.status === 'completed') {
       return 'Completed';
     }
-    if (this.goal.progress.percent === 100) {
+    if (this.goal.progress?.percent === 100) {
       return 'Completed';
     }
     
@@ -462,7 +462,9 @@ export class GoalDetailComponent implements OnInit, OnDestroy {
     return icons[status] || 'help';
   }
 
-  getDaysRemaining(deadline: Date): string {
+  getDaysRemaining(deadline: string | undefined): string {
+    if (!deadline) return 'No deadline set';
+    
     const today = new Date();
     const deadlineDate = new Date(deadline);
     const diffTime = deadlineDate.getTime() - today.getTime();
@@ -492,7 +494,7 @@ export class GoalDetailComponent implements OnInit, OnDestroy {
   }
 
   getProgressOffset(): string {
-    if (!this.goal) return '0';
+    if (!this.goal || !this.goal.progress) return '0';
     const circumference = 2 * Math.PI * 54;
     const offset = circumference - (this.goal.progress.percent / 100) * circumference;
     return offset.toString();
@@ -507,18 +509,18 @@ export class GoalDetailComponent implements OnInit, OnDestroy {
   }
 
   getCompletionRate(): number {
-    if (!this.goal) return 0;
+    if (!this.goal || !this.goal.milestones) return 0;
     const completed = this.goal.milestones.filter(m => m.completed).length;
     return Math.round((completed / this.goal.milestones.length) * 100);
   }
 
   getCompletedMilestones(): number {
-    if (!this.goal) return 0;
+    if (!this.goal?.milestones) return 0;
     return this.goal.milestones.filter(m => m.completed).length;
   }
 
   getAverageProgressPerWeek(): number {
-    if (!this.goal) return 0;
+    if (!this.goal || !this.goal.progress) return 0;
     const daysSinceCreated = this.getDaysSinceCreated();
     if (daysSinceCreated === 0) return 0;
     const weeks = daysSinceCreated / 7;
@@ -526,7 +528,7 @@ export class GoalDetailComponent implements OnInit, OnDestroy {
   }
 
   toggleMilestone(milestone: Milestone) {
-    if (!this.goal) return;
+    if (!this.goal || !this.goal.milestones || !this.goal.progress) return;
     
     milestone.completed = !milestone.completed;
     // Update goal progress based on completed milestones
@@ -534,7 +536,7 @@ export class GoalDetailComponent implements OnInit, OnDestroy {
     this.goal.progress.percent = Math.round((completedCount / this.goal.milestones.length) * 100);
     
     // Update the goal in the service
-    this.goalService.updateGoal(this.goal);
+    this.goalService.updateGoal(this.goal.id, this.goal);
   }
 
   editGoal() {
@@ -580,7 +582,7 @@ export class GoalDetailComponent implements OnInit, OnDestroy {
   }
 
   getGoalDetailsForDelete() {
-    if (!this.goal) return undefined;
+    if (!this.goal || !this.goal.milestones || !this.goal.progress) return undefined;
     
     return {
       milestonesCount: this.goal.milestones.length,
