@@ -10,17 +10,39 @@ import { AnalyticsComponent } from './components/analytics/analytics.component';
 import { CategoriesComponent } from './components/categories/categories.component';
 import { SignupComponent } from './components/signup/signup.component';
 import { LoginComponent } from './components/login/login.component';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './components/reset-password/reset-password';
+import { Onboarding } from './components/onboarding/onboarding';
+import { TestSupabaseComponent } from './components/test-supabase/test-supabase.component';
+import { SimpleTestComponent } from './components/simple-test/simple-test.component';
+import { AuthTestComponent } from './components/auth-test/auth-test.component';
+import { AuthGuard } from './guards/auth.guard';
+import { GuestGuard } from './guards/guest.guard';
 
 export const routes: Routes = [
-  { path: '', component: DashboardComponent },
-  { path: 'add-goal', component: AddGoalComponent },
-  { path: 'goals-list', component: GoalsListComponent },
-  { path: 'goal-detail/:id', component: GoalDetailComponent },
-  { path: 'edit-goal/:id', component: EditGoalComponent },
-  { path: 'add-milestone/:goalId', component: AddMilestoneComponent },
-  { path: 'update-progress/:goalId', component: UpdateProgressComponent },
-  { path: 'analytics', component: AnalyticsComponent },
-  { path: 'categories', component: CategoriesComponent },
-  { path: 'signup', component: SignupComponent },
-  { path: 'login', component: LoginComponent },
+  // Public routes (no auth required, but guests only)
+  { path: 'signup', component: SignupComponent, canActivate: [GuestGuard] },
+  { path: 'login', component: LoginComponent, canActivate: [GuestGuard] },
+  { path: 'forgot-password', component: ForgotPasswordComponent, canActivate: [GuestGuard] },
+  { path: 'reset-password', component: ResetPasswordComponent, canActivate: [GuestGuard] },
+  
+  // Public routes (no auth required, accessible to all)
+  { path: 'onboarding', component: Onboarding },
+  { path: 'test-supabase', component: TestSupabaseComponent },
+  { path: 'simple-test', component: SimpleTestComponent },
+  { path: 'auth-test', component: AuthTestComponent },
+  
+  // Protected routes (auth required)
+  { path: '', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: 'add-goal', component: AddGoalComponent, canActivate: [AuthGuard] },
+  { path: 'goals-list', component: GoalsListComponent, canActivate: [AuthGuard] },
+  { path: 'goal-detail/:id', component: GoalDetailComponent, canActivate: [AuthGuard] },
+  { path: 'edit-goal/:id', component: EditGoalComponent, canActivate: [AuthGuard] },
+  { path: 'add-milestone/:goalId', component: AddMilestoneComponent, canActivate: [AuthGuard] },
+  { path: 'update-progress/:goalId', component: UpdateProgressComponent, canActivate: [AuthGuard] },
+  { path: 'analytics', component: AnalyticsComponent, canActivate: [AuthGuard] },
+  { path: 'categories', component: CategoriesComponent, canActivate: [AuthGuard] },
+  
+  // Redirect to login for any unmatched routes
+  { path: '**', redirectTo: '/login' }
 ];
