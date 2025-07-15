@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -10,15 +10,16 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDividerModule } from '@angular/material/divider';
+import { AuthService } from '../../services/auth.service';
+import { NotificationService } from '../../services/notification.service';
 
 export interface SignUpData {
   email: string;
   password: string;
   confirmPassword: string;
-  firstName?: string;
-  lastName?: string;
+  fullName?: string;
   termsAccepted: boolean;
-  privacyAccepted: boolean;
 }
 
 export interface SupabaseSignUpData {
@@ -39,6 +40,7 @@ export interface SupabaseSignUpData {
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    RouterModule,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
@@ -46,7 +48,8 @@ export interface SupabaseSignUpData {
     MatIconModule,
     MatCheckboxModule,
     MatProgressBarModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatDividerModule
   ],
   template: `
     <div class="signup-container">
@@ -129,37 +132,23 @@ export interface SupabaseSignUpData {
               </mat-error>
             </mat-form-field>
 
-            <!-- Name Fields -->
-            <div class="name-fields">
-              <mat-form-field appearance="outline" class="form-field">
-                <mat-label>First Name (Optional)</mat-label>
-                <input matInput formControlName="firstName" placeholder="Enter your first name">
-                <mat-icon matSuffix>person</mat-icon>
-              </mat-form-field>
-
-              <mat-form-field appearance="outline" class="form-field">
-                <mat-label>Last Name (Optional)</mat-label>
-                <input matInput formControlName="lastName" placeholder="Enter your last name">
-                <mat-icon matSuffix>person</mat-icon>
-              </mat-form-field>
-            </div>
+            <!-- Full Name Field -->
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label>Full Name (Optional)</mat-label>
+              <input matInput formControlName="fullName" placeholder="Enter your full name">
+              <mat-icon matSuffix>person</mat-icon>
+            </mat-form-field>
 
             <!-- Terms and Privacy -->
             <div class="checkbox-section">
               <mat-checkbox formControlName="termsAccepted" class="checkbox-field">
                 I agree to the 
                 <a href="#" class="link">Terms of Service</a>
-              </mat-checkbox>
-              <mat-error *ngIf="signupForm.get('termsAccepted')?.hasError('required') && signupForm.get('termsAccepted')?.touched">
-                You must accept the Terms of Service
-              </mat-error>
-
-              <mat-checkbox formControlName="privacyAccepted" class="checkbox-field">
-                I agree to the 
+                and 
                 <a href="#" class="link">Privacy Policy</a>
               </mat-checkbox>
-              <mat-error *ngIf="signupForm.get('privacyAccepted')?.hasError('required') && signupForm.get('privacyAccepted')?.touched">
-                You must accept the Privacy Policy
+              <mat-error *ngIf="signupForm.get('termsAccepted')?.hasError('required') && signupForm.get('termsAccepted')?.touched">
+                You must accept the Terms of Service and Privacy Policy
               </mat-error>
             </div>
 
@@ -172,6 +161,25 @@ export interface SupabaseSignUpData {
               <mat-icon *ngIf="isSubmitting" class="spinning">refresh</mat-icon>
               {{ isSubmitting ? 'Creating Account...' : 'Create Account' }}
             </button>
+
+            <!-- Divider -->
+            <div class="divider">
+              <mat-divider></mat-divider>
+              <span class="divider-text">or continue with</span>
+              <mat-divider></mat-divider>
+            </div>
+
+            <!-- Social Login Buttons -->
+            <div class="social-login">
+              <button type="button" mat-outlined-button class="social-btn google-btn" (click)="signUpWithGoogle()">
+                <mat-icon>google</mat-icon>
+                Google
+              </button>
+              <button type="button" mat-outlined-button class="social-btn github-btn" (click)="signUpWithGitHub()">
+                <mat-icon>code</mat-icon>
+                GitHub
+              </button>
+            </div>
 
             <!-- Sign In Link -->
             <div class="signin-link">
@@ -224,7 +232,9 @@ export class SignupComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private authService: AuthService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit() {
@@ -237,10 +247,8 @@ export class SignupComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8), this.passwordStrengthValidator()]],
       confirmPassword: ['', [Validators.required]],
-      firstName: [''],
-      lastName: [''],
-      termsAccepted: [false, [Validators.requiredTrue]],
-      privacyAccepted: [false, [Validators.requiredTrue]]
+      fullName: [''],
+      termsAccepted: [false, [Validators.requiredTrue]]
     }, { validators: this.passwordMatchValidator });
   }
 
@@ -329,37 +337,47 @@ export class SignupComponent implements OnInit {
     if (this.signupForm.valid) {
       this.isSubmitting = true;
       
-      // Prepare data for Supabase
       const formData: SignUpData = this.signupForm.value;
-      const supabaseData: SupabaseSignUpData = {
-        email: formData.email,
-        password: formData.password,
-        options: {
-          data: {
-            first_name: formData.firstName || undefined,
-            last_name: formData.lastName || undefined,
-            full_name: formData.firstName && formData.lastName 
-              ? `${formData.firstName} ${formData.lastName}` 
-              : undefined
+      
+      // Prepare metadata for user profile
+      const metadata: any = {};
+      if (formData.fullName) {
+        metadata.display_name = formData.fullName;
+        // Split full name into first and last name
+        const nameParts = formData.fullName.trim().split(' ');
+        if (nameParts.length > 0) {
+          metadata.first_name = nameParts[0];
+          if (nameParts.length > 1) {
+            metadata.last_name = nameParts.slice(1).join(' ');
           }
         }
-      };
-
-      // Simulate Supabase signup (replace with actual Supabase call)
-      setTimeout(() => {
-        console.log('Supabase signup data:', supabaseData);
-        
-        // Simulate success
-        this.snackBar.open('Account created successfully! Welcome to TrackGoal!', 'Close', {
-          duration: 5000,
-          horizontalPosition: 'center',
-          verticalPosition: 'bottom',
-          panelClass: ['success-snackbar']
+      }
+      
+      // Call AuthService signup with metadata
+      this.authService.signUp(formData.email, formData.password, metadata)
+        .then(result => {
+          if (result.success) {
+            // Navigate to onboarding
+            this.router.navigate(['/onboarding']);
+          } else {
+            this.notificationService.error(
+              'Signup Failed', 
+              result.error?.message || 'Failed to create account. Please try again.', 
+              5000
+            );
+          }
+        })
+        .catch(error => {
+          console.error('Signup error:', error);
+          this.notificationService.error(
+            'Signup Failed', 
+            'An unexpected error occurred. Please try again.', 
+            5000
+          );
+        })
+        .finally(() => {
+          this.isSubmitting = false;
         });
-        
-        this.router.navigate(['/']);
-        this.isSubmitting = false;
-      }, 2000);
     } else {
       this.markFormGroupTouched();
     }
@@ -374,5 +392,21 @@ export class SignupComponent implements OnInit {
 
   goBack() {
     this.router.navigate(['/']);
+  }
+
+  signUpWithGoogle() {
+    this.snackBar.open('Google signup coming soon!', 'Close', {
+      duration: 3000,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom'
+    });
+  }
+
+  signUpWithGitHub() {
+    this.snackBar.open('GitHub signup coming soon!', 'Close', {
+      duration: 3000,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom'
+    });
   }
 } 
