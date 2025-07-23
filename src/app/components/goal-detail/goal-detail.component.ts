@@ -109,7 +109,7 @@ interface GoalStatistics {
               <div class="circular-progress">
                 <div class="progress-ring" [ngClass]="'progress-' + goal.category.toLowerCase()">
                   <div class="progress-circle">
-                    <div class="progress-value">{{ goal?.progress?.percent || 0 }}%</div>
+                    <div class="progress-value">{{ goal.progress?.percent || 0 }}%</div>
                     <div class="progress-label">Complete</div>
                   </div>
                   <svg class="progress-svg" viewBox="0 0 120 120">
@@ -193,7 +193,7 @@ interface GoalStatistics {
               <div class="stat-item">
                 <div class="stat-icon">🎯</div>
                 <div class="stat-content">
-                  <div class="stat-value">{{ getCompletedMilestones() }}/{{ goal?.milestones?.length || 0 }}</div>
+                  <div class="stat-value">{{ getCompletedMilestones() }}/{{ getTotalMilestones() }}</div>
                   <div class="stat-label">Milestones</div>
                 </div>
               </div>
@@ -249,10 +249,7 @@ interface GoalStatistics {
                   <div class="milestone-details" *ngIf="milestone.description">
                     <p>{{ milestone.description }}</p>
                   </div>
-                  <div class="milestone-date" *ngIf="milestone.dueDate">
-                    <mat-icon>event</mat-icon>
-                    <span>Due: {{ milestone.dueDate | date:'mediumDate' }}</span>
-                  </div>
+
                 </div>
               </mat-expansion-panel>
             </div>
@@ -337,6 +334,9 @@ export class GoalDetailComponent implements OnInit, OnDestroy {
   goalUpdateHistory: UpdateHistory | null = null;
   showDeleteConfirmation = false;
   private subscription!: Subscription;
+  private goalRealtimeSub: any;
+  private milestoneRealtimeSub: any;
+  private progressRealtimeSub: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -350,20 +350,57 @@ export class GoalDetailComponent implements OnInit, OnDestroy {
     this.route.params.subscribe(params => {
       const goalId = params['id'];
       this.loadGoal(goalId);
+      this.setupRealtimeSubscriptions(goalId);
     });
   }
 
   ngOnDestroy() {
     this.subscription?.unsubscribe();
+    this.goalRealtimeSub?.unsubscribe();
+    this.milestoneRealtimeSub?.unsubscribe();
+    this.progressRealtimeSub?.unsubscribe();
+  }
+
+  private setupRealtimeSubscriptions(goalId: string) {
+    // Subscribe to real-time goal updates
+    this.goalRealtimeSub = this.goalService.subscribeToGoals(() => {
+      // Reload goal data when changes occur
+      this.loadGoal(goalId);
+    });
+
+    // Subscribe to real-time milestone updates
+    this.milestoneRealtimeSub = this.goalService.subscribeToMilestones(() => {
+      // Reload goal data when milestones change
+      this.loadGoal(goalId);
+    });
+
+    // Subscribe to real-time progress updates
+    this.progressRealtimeSub = this.goalService.subscribeToAllProgress(() => {
+      // Reload goal data when progress changes
+      this.loadGoal(goalId);
+    });
   }
 
   loadGoal(goalId: string) {
-    this.subscription = this.goalService.getGoals().subscribe(goals => {
-      const goal = goals.find(g => g.id === goalId);
-      if (goal) {
-        this.goal = goal;
-        this.loadRecentActivity();
-        this.loadUpdateHistory();
+    this.subscription = this.goalService.getGoalById(goalId).subscribe({
+      next: (goal: Goal | null) => {
+        if (goal) {
+          this.goal = goal;
+          console.log('Loaded goal:', goal);
+          console.log('Goal milestones:', goal.milestones);
+          console.log('Goal progress:', goal.progress);
+          this.loadRecentActivity();
+          this.loadUpdateHistory();
+        } else {
+          // Goal not found, navigate back
+          this.notificationService.error('Goal not found', 'The requested goal could not be found');
+          this.router.navigate(['/dashboard']);
+        }
+      },
+      error: (error: any) => {
+        console.error('Error loading goal:', error);
+        this.notificationService.error('Error loading goal details', 'Failed to load goal information');
+        this.router.navigate(['/dashboard']);
       }
     });
   }
@@ -373,41 +410,36 @@ export class GoalDetailComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.recentActivity = [
-      {
-        id: '1',
-        date: new Date('2024-01-20'),
-        type: 'milestone',
-        title: 'Milestone Completed',
-        description: 'Completed "Run 5km twice" milestone',
-        icon: 'check_circle'
+    // Load real activity data from the database for this specific goal
+    this.goalService.getGoalActivity(this.goal.id).subscribe({
+      next: (activities) => {
+        this.recentActivity = activities.map(activity => ({
+          id: activity.id,
+          date: new Date(activity.created_at),
+          type: activity.type as 'milestone' | 'progress' | 'note',
+          title: activity.title,
+          description: activity.description,
+          value: activity.value,
+          icon: this.getActivityIcon(activity.type)
+        }));
       },
-      {
-        id: '2',
-        date: new Date('2024-01-18'),
-        type: 'progress',
-        title: 'Progress Updated',
-        description: 'Updated progress to 70%',
-        value: 70,
-        icon: 'trending_up'
-      },
-      {
-        id: '3',
-        date: new Date('2024-01-15'),
-        type: 'milestone',
-        title: 'Milestone Completed',
-        description: 'Completed "Run 5km once" milestone',
-        icon: 'check_circle'
-      },
-      {
-        id: '4',
-        date: new Date('2024-01-10'),
-        type: 'note',
-        title: 'Goal Created',
-        description: 'Started tracking this goal',
-        icon: 'flag'
+      error: (error) => {
+        console.error('Error loading recent activity:', error);
+        this.recentActivity = [];
       }
-    ];
+    });
+  }
+
+  private getActivityIcon(type: string): string {
+    const icons: Record<string, string> = {
+      'milestone': 'check_circle',
+      'progress': 'trending_up',
+      'note': 'note',
+      'goal_created': 'flag',
+      'milestone_completed': 'check_circle',
+      'progress_updated': 'trending_up'
+    };
+    return icons[type] || 'info';
   }
 
   loadUpdateHistory() {
@@ -502,16 +534,19 @@ export class GoalDetailComponent implements OnInit, OnDestroy {
 
   getDaysSinceCreated(): number {
     if (!this.goal) return 0;
-    const createdDate = new Date('2024-01-01'); // Mock created date
+    const createdDate = new Date(this.goal.created_at || new Date());
     const today = new Date();
     const diffTime = today.getTime() - createdDate.getTime();
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   }
 
   getCompletionRate(): number {
-    if (!this.goal || !this.goal.milestones) return 0;
+    if (!this.goal || !this.goal.milestones || this.goal.milestones.length === 0) {
+      return 0;
+    }
     const completed = this.goal.milestones.filter(m => m.completed).length;
-    return Math.round((completed / this.goal.milestones.length) * 100);
+    const total = this.goal.milestones.length;
+    return total > 0 ? Math.round((completed / total) * 100) : 0;
   }
 
   getCompletedMilestones(): number {
@@ -519,12 +554,18 @@ export class GoalDetailComponent implements OnInit, OnDestroy {
     return this.goal.milestones.filter(m => m.completed).length;
   }
 
+  getTotalMilestones(): number {
+    if (!this.goal?.milestones) return 0;
+    return this.goal.milestones.length;
+  }
+
   getAverageProgressPerWeek(): number {
     if (!this.goal || !this.goal.progress) return 0;
     const daysSinceCreated = this.getDaysSinceCreated();
-    if (daysSinceCreated === 0) return 0;
-    const weeks = daysSinceCreated / 7;
-    return Math.round(this.goal.progress.percent / weeks);
+    if (daysSinceCreated <= 0) return 0;
+    const weeks = Math.max(daysSinceCreated / 7, 1); // Minimum 1 week
+    const progressPercent = this.goal.progress.percent || 0;
+    return Math.round(progressPercent / weeks);
   }
 
   toggleMilestone(milestone: Milestone) {

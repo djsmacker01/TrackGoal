@@ -161,11 +161,11 @@ import { Subscription } from 'rxjs';
               <div class="goal-progress">
                 <div class="progress-header">
                   <span class="progress-label">Progress</span>
-                  <span class="progress-percentage">{{ goal.progress.percent }}%</span>
+                  <span class="progress-percentage">{{ goal?.progress?.percent || 0 }}%</span>
                 </div>
                 <div class="progress-container">
                   <mat-progress-bar 
-                    [value]="goal.progress.percent" 
+                    [value]="goal?.progress?.percent || 0" 
                     [ngClass]="'progress-' + goal.category.toLowerCase()"
                     class="custom-progress-bar">
                   </mat-progress-bar>
@@ -278,30 +278,35 @@ export class GoalsListComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loadGoals();
-    this.initForm();
-    this.applyFilters();
   }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
   initForm() {
-    // Form initialization is no longer needed since we're using template-driven approach
-    console.log('Form initialized');
+    // Form initialization if needed
   }
 
   onSearchChange(event: any) {
-    this.searchTerm = event.target.value || '';
+    this.searchTerm = event.target.value;
     this.applyFilters();
   }
 
   loadGoals() {
-    console.log('Loading goals...');
-    this.subscription = this.goalService.getGoals().subscribe(goals => {
-      this.allGoals = goals;
-      console.log('All goals loaded:', this.allGoals.length);
-      console.log('Goals with IDs 3, 4, 5:', this.allGoals.filter(g => ['3', '4', '5'].includes(g.id)));
+    this.subscription = this.goalService.goals$.subscribe({
+      next: (goals) => {
+        this.allGoals = goals;
+        this.applyFilters();
+        console.log('Goals loaded:', goals.length);
+      },
+      error: (error) => {
+        console.error('Error loading goals:', error);
+        this.allGoals = [];
+        this.filteredGoals = [];
+      }
     });
   }
 
@@ -316,57 +321,35 @@ export class GoalsListComponent implements OnInit, OnDestroy {
   }
 
   applyFilters() {
-    console.log('Applying filters...', { 
-      allGoalsLength: this.allGoals?.length, 
-      selectedCategory: this.selectedCategory, 
-      selectedStatus: this.selectedStatus, 
-      searchTerm: this.searchTerm 
-    });
+    let filtered = [...this.allGoals];
 
-    if (!this.allGoals || this.allGoals.length === 0) {
-      this.filteredGoals = [];
-      return;
+    // Apply category filter
+    if (this.selectedCategory && this.selectedCategory !== 'all') {
+      filtered = filtered.filter(goal => goal.category === this.selectedCategory);
     }
 
-    this.filteredGoals = this.allGoals.filter(goal => {
-      // Category filter
-      const categoryMatch = this.selectedCategory === 'all' || goal.category === this.selectedCategory;
-      
-      // Status filter
-      const goalStatus = this.getGoalStatus(goal);
-      const statusMatch = this.selectedStatus === 'all' || goalStatus === this.selectedStatus;
-      
-      // Search filter
-      const searchMatch = !this.searchTerm || 
-        goal.title.toLowerCase().includes(this.searchTerm.toLowerCase());
-      
-      const isIncluded = categoryMatch && statusMatch && searchMatch;
-      
-      // Debug logging for goals 3, 4, 5
-      if (['3', '4', '5'].includes(goal.id)) {
-        console.log(`Goal ${goal.id} (${goal.title}):`, {
-          categoryMatch,
-          statusMatch,
-          searchMatch,
-          isIncluded,
-          goalStatus,
-          selectedCategory: this.selectedCategory,
-          selectedStatus: this.selectedStatus
-        });
-      }
-      
-      return isIncluded;
-    });
+    // Apply status filter
+    if (this.selectedStatus && this.selectedStatus !== 'all') {
+      filtered = filtered.filter(goal => goal.status === this.selectedStatus);
+    }
 
-    console.log('Filtered goals:', this.filteredGoals.length);
-    console.log('Goals 3, 4, 5 in filtered results:', this.filteredGoals.filter(g => ['3', '4', '5'].includes(g.id)).map(g => g.id));
+    // Apply search filter
+    if (this.searchTerm.trim()) {
+      const searchLower = this.searchTerm.toLowerCase();
+      filtered = filtered.filter(goal => 
+        goal.title.toLowerCase().includes(searchLower) ||
+        goal.description?.toLowerCase().includes(searchLower)
+      );
+    }
+
+    this.filteredGoals = filtered;
   }
 
   getGoalStatus(goal: Goal): string {
     if (goal.status === 'completed') {
       return 'Completed';
     }
-    if (goal.progress.percent === 100) {
+    if (goal.progress?.percent === 100) {
       return 'Completed';
     }
     
@@ -403,10 +386,8 @@ export class GoalsListComponent implements OnInit, OnDestroy {
     return icons[status] || 'help';
   }
 
-  getDaysRemaining(deadline: Date | undefined): string {
-    if (!deadline) {
-      return 'No deadline set';
-    }
+  getDaysRemaining(deadline: string | undefined): string {
+    if (!deadline) return 'No deadline set';
     
     const today = new Date();
     const deadlineDate = new Date(deadline);
