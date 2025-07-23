@@ -326,7 +326,7 @@ export class EditGoalComponent implements OnInit {
       );
       
       // Update the goal in the service
-      this.goalService.updateGoal(updatedGoal);
+      this.goalService.updateGoal(updatedGoal.id, updatedGoal);
       
       // Store goal ID for navigation
       const goalId = this.goal.id;

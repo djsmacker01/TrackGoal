@@ -15,7 +15,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { FormsModule } from '@angular/forms';
-import { Goal, Category } from '../../goal.model';
+import { Goal, Category, GoalStatus } from '../../goal.model';
 import { GoalService } from '../../services/goal.service';
 import { CategoryService, CategoryConfig } from '../../services/category.service';
 import { AddCategoryDialogComponent } from '../add-category-dialog/add-category-dialog.component';
@@ -243,10 +243,10 @@ interface CategoryStats {
                   </div>
                   <div class="goal-progress">
                     <mat-progress-bar 
-                      [value]="goal.progress.percent" 
+                      [value]="goal?.progress?.percent || 0" 
                       class="goal-progress-bar">
                     </mat-progress-bar>
-                    <span class="progress-percentage">{{ goal.progress.percent }}%</span>
+                    <span class="progress-percentage">{{ goal?.progress?.percent || 0 }}%</span>
                   </div>
                   <div class="goal-milestone">
                     <mat-icon class="milestone-icon">flag</mat-icon>
@@ -340,9 +340,14 @@ export class CategoriesComponent implements OnInit, OnDestroy {
       const categoryGoals = goals.filter(goal => goal.category === config.name);
       const completedGoals = categoryGoals.filter(goal => goal.status === 'completed').length;
       const activeGoals = categoryGoals.filter(goal => goal.status === 'active').length;
-      const overdueGoals = categoryGoals.filter(goal => goal.status === 'overdue').length;
+      const overdueGoals = categoryGoals.filter(goal => {
+        if (!goal.deadline) return false;
+        const deadline = new Date(goal.deadline);
+        const today = new Date();
+        return deadline < today && goal.status !== 'completed';
+      }).length;
       const averageProgress = categoryGoals.length > 0 
-        ? Math.round(categoryGoals.reduce((sum, goal) => sum + goal.progress.percent, 0) / categoryGoals.length)
+        ? Math.round(categoryGoals.reduce((sum, goal) => sum + (goal?.progress?.percent || 0), 0) / categoryGoals.length)
         : 0;
 
       // Generate recent activity based on goals
@@ -369,9 +374,9 @@ export class CategoriesComponent implements OnInit, OnDestroy {
     goals.forEach(goal => {
       if (goal.status === 'completed') {
         activities.push(`Completed "${goal.title}"`);
-      } else if (goal.progress.percent > 50) {
+      } else if (goal?.progress?.percent && goal.progress.percent > 50) {
         activities.push(`Made progress on "${goal.title}"`);
-      } else if (goal.status === 'overdue') {
+      } else if (goal.deadline && new Date(goal.deadline) < new Date() && goal.status !== ('completed' as GoalStatus)) {
         activities.push(`"${goal.title}" is overdue`);
       }
     });
@@ -396,7 +401,12 @@ export class CategoriesComponent implements OnInit, OnDestroy {
       case 'completed':
         return category.goals.filter(goal => goal.status === 'completed');
       case 'overdue':
-        return category.goals.filter(goal => goal.status === 'overdue');
+        return category.goals.filter(goal => {
+          if (!goal.deadline) return false;
+          const deadline = new Date(goal.deadline);
+          const today = new Date();
+          return deadline < today && goal.status !== 'completed';
+        });
       default:
         return category.goals;
     }

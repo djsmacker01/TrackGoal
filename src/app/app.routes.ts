@@ -8,10 +8,13 @@ import { AddMilestoneComponent } from './components/add-milestone/add-milestone.
 import { UpdateProgressComponent } from './components/update-progress/update-progress.component';
 import { AnalyticsComponent } from './components/analytics/analytics.component';
 import { CategoriesComponent } from './components/categories/categories.component';
+import { ProfileComponent } from './components/profile/profile.component';
+import { SettingsComponent } from './components/settings/settings.component';
 import { SignupComponent } from './components/signup/signup.component';
 import { LoginComponent } from './components/login/login.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password';
+import { EmailVerificationComponent } from './components/email-verification/email-verification.component';
 import { Onboarding } from './components/onboarding/onboarding';
 import { TestSupabaseComponent } from './components/test-supabase/test-supabase.component';
 import { SimpleTestComponent } from './components/simple-test/simple-test.component';
@@ -25,6 +28,7 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent, canActivate: [GuestGuard] },
   { path: 'forgot-password', component: ForgotPasswordComponent, canActivate: [GuestGuard] },
   { path: 'reset-password', component: ResetPasswordComponent, canActivate: [GuestGuard] },
+  { path: 'verify-email', component: EmailVerificationComponent },
   
   // Public routes (no auth required, accessible to all)
   { path: 'onboarding', component: Onboarding },
@@ -42,6 +46,8 @@ export const routes: Routes = [
   { path: 'update-progress/:goalId', component: UpdateProgressComponent, canActivate: [AuthGuard] },
   { path: 'analytics', component: AnalyticsComponent, canActivate: [AuthGuard] },
   { path: 'categories', component: CategoriesComponent, canActivate: [AuthGuard] },
+  { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
+  { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] },
   
   // Redirect to login for any unmatched routes
   { path: '**', redirectTo: '/login' }
