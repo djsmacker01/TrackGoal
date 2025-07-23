@@ -68,7 +68,11 @@ export interface SupabaseSignUpData {
             <!-- Email Field -->
             <mat-form-field appearance="outline" class="form-field">
               <mat-label>Email Address</mat-label>
-              <input matInput type="email" formControlName="email" placeholder="Enter your email" required>
+              <input matInput type="email" formControlName="email" 
+                     placeholder="Enter your email" 
+                     autocomplete="email"
+                     name="email"
+                     required>
               <mat-icon matSuffix>email</mat-icon>
               <mat-error *ngIf="signupForm.get('email')?.hasError('required')">
                 Email is required
@@ -83,7 +87,10 @@ export interface SupabaseSignUpData {
               <mat-label>Password</mat-label>
               <input matInput [type]="showPassword ? 'text' : 'password'" 
                      formControlName="password" 
-                     placeholder="Create a strong password" required>
+                     placeholder="Create a strong password" 
+                     autocomplete="new-password"
+                     name="password"
+                     required>
               <button mat-icon-button matSuffix type="button" 
                       (click)="togglePasswordVisibility()" 
                       [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
@@ -118,7 +125,10 @@ export interface SupabaseSignUpData {
               <mat-label>Confirm Password</mat-label>
               <input matInput [type]="showConfirmPassword ? 'text' : 'password'" 
                      formControlName="confirmPassword" 
-                     placeholder="Confirm your password" required>
+                     placeholder="Confirm your password" 
+                     autocomplete="new-password"
+                     name="confirmPassword"
+                     required>
               <button mat-icon-button matSuffix type="button" 
                       (click)="toggleConfirmPasswordVisibility()" 
                       [attr.aria-label]="showConfirmPassword ? 'Hide password' : 'Show password'">
@@ -339,6 +349,8 @@ export class SignupComponent implements OnInit {
       
       const formData: SignUpData = this.signupForm.value;
       
+      console.log('Starting signup process for:', formData.email);
+      
       // Prepare metadata for user profile
       const metadata: any = {};
       if (formData.fullName) {
@@ -353,13 +365,18 @@ export class SignupComponent implements OnInit {
         }
       }
       
+      console.log('Signup metadata:', metadata);
+      
       // Call AuthService signup with metadata
       this.authService.signUp(formData.email, formData.password, metadata)
         .then(result => {
+          console.log('Signup result:', result);
           if (result.success) {
-            // Navigate to onboarding
-            this.router.navigate(['/onboarding']);
+            console.log('Signup successful, navigating to email verification');
+            // Navigate to email verification page
+            this.router.navigate(['/verify-email']);
           } else {
+            console.log('Signup failed:', result.error);
             this.notificationService.error(
               'Signup Failed', 
               result.error?.message || 'Failed to create account. Please try again.', 
