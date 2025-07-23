@@ -4,8 +4,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
@@ -24,8 +23,6 @@ import { GoalService } from '../../services/goal.service';
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
     MatButtonModule,
     MatIconModule,
     MatChipsModule,
@@ -91,14 +88,14 @@ import { GoalService } from '../../services/goal.service';
                         </linearGradient>
                       </defs>
                     </svg>
-                    <span class="progress-text">{{ goal?.progress?.percent || 0 }}%</span>
+                    <span class="progress-text">{{ goal.progress?.percent || 0 }}%</span>
                   </div>
                 </div>
               </div>
               <div class="goal-stats">
                 <div class="stat-item">
                   <mat-icon>flag</mat-icon>
-                  <span>{{ goal?.milestones?.length || 0 }} milestones</span>
+                  <span>{{ goal.milestones?.length || 0 }} milestones</span>
                 </div>
                 <div class="stat-item">
                   <mat-icon>check_circle</mat-icon>
@@ -146,13 +143,7 @@ import { GoalService } from '../../services/goal.service';
                 <mat-icon matSuffix>description</mat-icon>
               </mat-form-field>
 
-              <!-- Milestone Deadline -->
-              <mat-form-field appearance="outline" class="form-field">
-                <mat-label>Due Date (Optional)</mat-label>
-                <input matInput [matDatepicker]="picker" formControlName="dueDate">
-                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-datepicker #picker></mat-datepicker>
-              </mat-form-field>
+
 
               <!-- Target Value (for numerical goals) -->
               <mat-form-field appearance="outline" class="form-field" *ngIf="isNumericalGoal()">
@@ -208,10 +199,6 @@ import { GoalService } from '../../services/goal.service';
                       {{ milestoneForm.get('description')?.value }}
                     </p>
                     <div class="milestone-meta">
-                      <span class="due-date" *ngIf="milestoneForm.get('dueDate')?.value">
-                        <mat-icon>schedule</mat-icon>
-                        {{ milestoneForm.get('dueDate')?.value | date:'MMM dd, yyyy' }}
-                      </span>
                       <span class="target-value" *ngIf="milestoneForm.get('targetValue')?.value">
                         <mat-icon>target</mat-icon>
                         {{ milestoneForm.get('targetValue')?.value }}
@@ -285,7 +272,6 @@ export class AddMilestoneComponent implements OnInit {
     this.milestoneForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3)]],
       description: [''],
-      dueDate: [null],
       targetValue: [null, [Validators.min(1)]]
     });
   }
@@ -311,19 +297,25 @@ export class AddMilestoneComponent implements OnInit {
   }
 
   getProgressOffset(): string {
-    if (!this.goal?.progress) return '0';
+    if (!this.goal?.progress) {
+      return '0';
+    }
     const circumference = 2 * Math.PI * 25;
     const offset = circumference - (this.goal.progress.percent / 100) * circumference;
     return offset.toString();
   }
 
   getCompletedMilestones(): number {
-    if (!this.goal?.milestones) return 0;
+    if (!this.goal?.milestones) {
+      return 0;
+    }
     return this.goal.milestones.filter(m => m.completed).length;
   }
 
   getDaysRemaining(deadline: string | undefined): string {
-    if (!deadline) return 'No deadline set';
+    if (!deadline) {
+      return 'No deadline set';
+    }
     
     const today = new Date();
     const deadlineDate = new Date(deadline);
@@ -343,11 +335,18 @@ export class AddMilestoneComponent implements OnInit {
   }
 
   getNextSequenceNumber(): number {
-    if (!this.goal?.milestones) return 1;
+    if (!this.goal?.milestones) {
+      return 1;
+    }
     return this.goal.milestones.length + 1;
   }
 
   onSubmit() {
+    console.log('Form submitted');
+    console.log('Form valid:', this.milestoneForm.valid);
+    console.log('Form value:', this.milestoneForm.value);
+    console.log('Goal:', this.goal);
+    
     if (this.milestoneForm.valid && this.goal) {
       this.isSubmitting = true;
       
@@ -358,13 +357,16 @@ export class AddMilestoneComponent implements OnInit {
         goal_id: this.goal.id,
         title: formData.title,
         description: formData.description || undefined,
-        dueDate: formData.dueDate || undefined,
+        target_value: formData.targetValue || undefined,
         completed: false
       };
+      
+      console.log('Creating milestone:', newMilestone);
       
       // Add milestone to database
       this.goalService.createMilestone(newMilestone).subscribe({
         next: (createdMilestone) => {
+          console.log('Milestone created successfully:', createdMilestone);
           this.isSubmitting = false;
           
           this.notificationService.success(
@@ -377,8 +379,8 @@ export class AddMilestoneComponent implements OnInit {
           this.router.navigate(['/goal-detail', this.goal!.id]);
         },
         error: (error) => {
-          this.isSubmitting = false;
           console.error('Error creating milestone:', error);
+          this.isSubmitting = false;
           
           this.notificationService.error(
             'Error', 
@@ -388,6 +390,7 @@ export class AddMilestoneComponent implements OnInit {
         }
       });
     } else {
+      console.log('Form is invalid or goal is null');
       this.markFormGroupTouched();
     }
   }
