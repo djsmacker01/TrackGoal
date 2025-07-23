@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -10,6 +10,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { AuthService } from '../../services/auth.service';
+import { NotificationService } from '../../services/notification.service';
 
 export interface LoginData {
   email: string;
@@ -28,6 +30,7 @@ export interface SupabaseLoginData {
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    RouterModule,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
@@ -54,7 +57,11 @@ export interface SupabaseLoginData {
             <!-- Email Field -->
             <mat-form-field appearance="outline" class="form-field">
               <mat-label>Email Address</mat-label>
-              <input matInput type="email" formControlName="email" placeholder="Enter your email" required>
+              <input matInput type="email" formControlName="email" 
+                     placeholder="Enter your email" 
+                     autocomplete="email"
+                     name="email"
+                     required>
               <mat-icon matSuffix>email</mat-icon>
               <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
                 Email is required
@@ -69,7 +76,10 @@ export interface SupabaseLoginData {
               <mat-label>Password</mat-label>
               <input matInput [type]="showPassword ? 'text' : 'password'" 
                      formControlName="password" 
-                     placeholder="Enter your password" required>
+                     placeholder="Enter your password" 
+                     autocomplete="current-password"
+                     name="password"
+                     required>
               <button mat-icon-button matSuffix type="button" 
                       (click)="togglePasswordVisibility()" 
                       [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
@@ -166,7 +176,9 @@ export class LoginComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private authService: AuthService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit() {
@@ -189,29 +201,33 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.valid) {
       this.isSubmitting = true;
       
-      // Prepare data for Supabase
       const formData: LoginData = this.loginForm.value;
-      const supabaseData: SupabaseLoginData = {
-        email: formData.email,
-        password: formData.password
-      };
-
-      // Simulate Supabase login (replace with actual Supabase call)
-      setTimeout(() => {
-        console.log('Supabase login data:', supabaseData);
-        console.log('Remember me:', formData.rememberMe);
-        
-        // Simulate success
-        this.snackBar.open('Welcome back! You have successfully signed in.', 'Close', {
-          duration: 4000,
-          horizontalPosition: 'center',
-          verticalPosition: 'bottom',
-          panelClass: ['success-snackbar']
+      
+      // Call AuthService signin
+      this.authService.signIn(formData.email, formData.password)
+        .then(result => {
+          if (result.success) {
+            // Navigate to dashboard
+            this.router.navigate(['/']);
+          } else {
+            this.notificationService.error(
+              'Login Failed', 
+              result.error?.message || 'Invalid email or password. Please try again.', 
+              5000
+            );
+          }
+        })
+        .catch(error => {
+          console.error('Login error:', error);
+          this.notificationService.error(
+            'Login Failed', 
+            'An unexpected error occurred. Please try again.', 
+            5000
+          );
+        })
+        .finally(() => {
+          this.isSubmitting = false;
         });
-        
-        this.router.navigate(['/']);
-        this.isSubmitting = false;
-      }, 2000);
     } else {
       this.markFormGroupTouched();
     }
