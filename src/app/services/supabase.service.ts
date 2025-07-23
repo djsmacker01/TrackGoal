@@ -133,16 +133,29 @@ export class SupabaseService {
 
   // Authentication Methods
   async signUp(email: string, password: string): Promise<AuthResponse> {
-    const response = await this.supabase.auth.signUp({
-      email,
-      password
-    });
-    
-    // Don't create profile here - it will be created when user first logs in
-    // or we can create it in a separate step after email confirmation
-    console.log('Signup response:', response);
-    
-    return response;
+    try {
+      console.log('Starting signup process for:', email);
+      console.log('Supabase URL:', environment.supabaseUrl);
+      console.log('Supabase client initialized:', !!this.supabase);
+      
+      const response = await this.supabase.auth.signUp({
+        email,
+        password
+      });
+      
+      console.log('Signup response:', response);
+      
+      if (response.error) {
+        console.error('Signup error:', response.error);
+      } else {
+        console.log('Signup successful:', response.data);
+      }
+      
+      return response;
+    } catch (error) {
+      console.error('Signup exception:', error);
+      throw error;
+    }
   }
 
   async signIn(email: string, password: string): Promise<AuthResponse> {
@@ -557,12 +570,22 @@ export class SupabaseService {
   // Test methods for the simple test component
   async testConnection(): Promise<boolean> {
     try {
+      console.log('Testing Supabase connection...');
+      console.log('URL:', environment.supabaseUrl);
+      console.log('Client initialized:', !!this.supabase);
+      
       const { data, error } = await this.supabase
         .from('goals')
         .select('count')
         .limit(1);
       
-      return !error;
+      if (error) {
+        console.error('Connection test error:', error);
+        return false;
+      }
+      
+      console.log('Connection test successful:', data);
+      return true;
     } catch (error) {
       console.error('Connection test failed:', error);
       return false;

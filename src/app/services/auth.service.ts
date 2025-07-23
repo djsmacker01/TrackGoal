@@ -66,37 +66,54 @@ export class AuthService {
     try {
       this.setLoading(true);
       
-      const response = await this.supabaseService.signUp(email, password);
+      // TEMPORARY: Skip email confirmation for testing
+      const response = await this.supabaseService.client.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/verify-email`,
+          data: metadata
+        }
+      });
       
       if (response.error) {
         const error = this.parseSupabaseError(response.error);
         return { success: false, error };
       }
 
-      // If signup is successful and we have metadata, create a user profile
-      if (response.data.user && metadata) {
+      // TEMPORARY: Auto-confirm user for testing
+      if (response.data.user) {
         try {
           // Create user profile
           await this.supabaseService.createUserProfile(response.data.user.id);
           
           // Update the profile with metadata
           const profileData: any = {};
-          if (metadata.display_name) profileData.display_name = metadata.display_name;
-          if (metadata.first_name) profileData.first_name = metadata.first_name;
-          if (metadata.last_name) profileData.last_name = metadata.last_name;
+          if (metadata?.display_name) profileData.display_name = metadata.display_name;
+          if (metadata?.first_name) profileData.first_name = metadata.first_name;
+          if (metadata?.last_name) profileData.last_name = metadata.last_name;
           
           if (Object.keys(profileData).length > 0) {
             await this.supabaseService.updateUserProfile(profileData);
           }
+          
+          // TEMPORARY: Auto-sign in the user
+          const signInResponse = await this.supabaseService.client.auth.signInWithPassword({
+            email,
+            password
+          });
+          
+          if (signInResponse.error) {
+            console.error('Auto sign-in failed:', signInResponse.error);
+          }
         } catch (profileError) {
           console.error('Error creating user profile:', profileError);
-          // Don't fail the signup if profile creation fails
         }
       }
       
       this.notificationService.success(
         'Account Created', 
-        'Welcome to TrackGoal! Please check your email to confirm your account.', 
+        'Welcome to TrackGoal! Your account has been created successfully.', 
         5000
       );
       
