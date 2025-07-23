@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angu
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 export interface NotificationData {
   type: 'success' | 'error' | 'warning' | 'info';
@@ -41,26 +42,23 @@ export interface NotificationData {
   `,
   styleUrls: ['./custom-notification.component.scss'],
   animations: [
-    {
-      name: 'slideInOut',
-      trigger: 'slideInOut',
-      state: 'in',
-      style: {
+    trigger('slideInOut', [
+      state('in', style({
         transform: 'translateX(0)',
         opacity: 1
-      },
-      transition: 'transform 0.3s ease-out, opacity 0.3s ease-out'
-    },
-    {
-      name: 'slideInOut',
-      trigger: 'slideInOut',
-      state: 'out',
-      style: {
+      })),
+      state('out', style({
         transform: 'translateX(100%)',
         opacity: 0
-      },
-      transition: 'transform 0.3s ease-in, opacity 0.3s ease-in'
-    }
+      })),
+      transition('void => in', [
+        style({ transform: 'translateX(100%)', opacity: 0 }),
+        animate('300ms ease-out')
+      ]),
+      transition('in => out', [
+        animate('300ms ease-in')
+      ])
+    ])
   ]
 })
 export class CustomNotificationComponent implements OnInit, OnDestroy {
