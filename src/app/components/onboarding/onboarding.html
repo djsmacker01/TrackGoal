@@ -1,0 +1,208 @@
+<div class="onboarding-container">
+    <!-- Background with glassmorphism effect -->
+    <div class="background-overlay"></div>
+
+    <!-- Stepper/Progress Bar -->
+    <div class="stepper-container">
+        <div class="stepper">
+            <div *ngFor="let stepNum of [1,2,3,4,5]; let i = index" class="step" [class.active]="step === stepNum"
+                [class.completed]="step > stepNum">
+                <div class="step-number">{{ stepNum }}</div>
+                <div class="step-label">
+                    <span *ngIf="stepNum === 1">Welcome</span>
+                    <span *ngIf="stepNum === 2">Categories</span>
+                    <span *ngIf="stepNum === 3">Goal</span>
+                    <span *ngIf="stepNum === 4">Settings</span>
+                    <span *ngIf="stepNum === 5">Complete</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="content-container">
+        <div class="glass-card" [@stepTransition]="step">
+
+            <!-- Step 1: Welcome -->
+            <div *ngIf="step === 1" class="step-content welcome-step">
+                <div class="welcome-icon">🚀</div>
+                <h1 class="step-title">Welcome to GoalTracker!</h1>
+                <p class="step-description">
+                    Your journey to achieving your goals starts here. We'll help you stay accountable,
+                    track your progress, and celebrate your successes along the way.
+                </p>
+                <div class="benefits-list">
+                    <div class="benefit-item">
+                        <span class="benefit-icon">📊</span>
+                        <span>Track your progress with detailed analytics</span>
+                    </div>
+                    <div class="benefit-item">
+                        <span class="benefit-icon">🎯</span>
+                        <span>Set clear, achievable milestones</span>
+                    </div>
+                    <div class="benefit-item">
+                        <span class="benefit-icon">🔔</span>
+                        <span>Get personalized reminders and notifications</span>
+                    </div>
+                    <div class="benefit-item">
+                        <span class="benefit-icon">📈</span>
+                        <span>Visualize your growth and achievements</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Categories -->
+            <div *ngIf="step === 2" class="step-content categories-step">
+                <h1 class="step-title">What types of goals can you track?</h1>
+                <p class="step-description">
+                    Choose the categories that matter most to you. You can always add more later.
+                </p>
+                <div class="categories-grid">
+                    <div *ngFor="let category of categories" class="category-card"
+                        [class.selected]="onboardingState.selectedCategories?.includes(category.key)"
+                        (click)="toggleCategory(category.key)">
+                        <div class="category-icon">{{ category.icon }}</div>
+                        <h3 class="category-title">{{ category.label }}</h3>
+                        <p class="category-description">{{ category.desc }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Create Goal -->
+            <div *ngIf="step === 3" class="step-content goal-step">
+                <h1 class="step-title">Let's create your first goal</h1>
+                <p class="step-description">
+                    Start with something meaningful to you. You can always add more goals later.
+                </p>
+
+                <form [formGroup]="goalForm" class="goal-form">
+                    <div class="form-group">
+                        <label for="goalTitle">Goal Title</label>
+                        <input type="text" id="goalTitle" formControlName="title"
+                            placeholder="e.g., Run a marathon, Learn Spanish" class="form-input">
+                        <div *ngIf="goalForm.get('title')?.invalid && goalForm.get('title')?.touched"
+                            class="error-message">
+                            Please enter a goal title
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="goalCategory">Category</label>
+                        <select id="goalCategory" formControlName="category" class="form-select">
+                            <option value="">Select a category</option>
+                            <option *ngFor="let category of categories" [value]="category.key">
+                                {{ category.label }}
+                            </option>
+                        </select>
+                        <div *ngIf="goalForm.get('category')?.invalid && goalForm.get('category')?.touched"
+                            class="error-message">
+                            Please select a category
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="startDate">Start Date</label>
+                            <input type="date" id="startDate" formControlName="startDate" class="form-input">
+                            <div *ngIf="goalForm.get('startDate')?.invalid && goalForm.get('startDate')?.touched"
+                                class="error-message">
+                                Please select a start date
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="goalTarget">Target</label>
+                            <input type="text" id="goalTarget" formControlName="target"
+                                placeholder="e.g., 26.2 miles, B2 level" class="form-input">
+                            <div *ngIf="goalForm.get('target')?.invalid && goalForm.get('target')?.touched"
+                                class="error-message">
+                                Please enter a target
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Step 4: Preferences -->
+            <div *ngIf="step === 4" class="step-content preferences-step">
+                <h1 class="step-title">Set your preferences</h1>
+                <p class="step-description">
+                    Customize your experience to match your preferences. You can change these anytime.
+                </p>
+
+                <form [formGroup]="preferencesForm" class="preferences-form">
+                    <div class="preference-group">
+                        <label class="preference-label">
+                            <input type="checkbox" formControlName="notifications" class="preference-checkbox">
+                            <span class="preference-text">Enable notifications and reminders</span>
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reminderFrequency">Reminder Frequency</label>
+                        <select id="reminderFrequency" formControlName="reminderFrequency" class="form-select">
+                            <option value="Daily">Daily</option>
+                            <option value="Weekly">Weekly</option>
+                            <option value="Monthly">Monthly</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="privacy">Privacy Settings</label>
+                        <select id="privacy" formControlName="privacy" class="form-select">
+                            <option value="Private">Private - Only you can see your goals</option>
+                            <option value="Public">Public - Share your progress with others</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Step 5: Completion -->
+            <div *ngIf="step === 5" class="step-content completion-step">
+                <div class="completion-icon">🎉</div>
+                <h1 class="step-title">You're all set!</h1>
+                <p class="step-description">
+                    Congratulations! You're ready to start tracking your goals and achieving your dreams.
+                </p>
+
+                <div class="dashboard-preview">
+                    <div class="preview-card">
+                        <h3>Your Dashboard</h3>
+                        <p>Track progress, view analytics, and celebrate milestones</p>
+                    </div>
+                </div>
+
+                <div class="celebration-animation" *ngIf="completed">
+                    <div class="confetti"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Controls -->
+    <div class="navigation-container">
+        <div class="nav-buttons">
+            <!-- Previous Button -->
+            <button *ngIf="step > 1" (click)="prev()" class="nav-btn prev-btn">
+                ← Previous
+            </button>
+
+            <!-- Skip Buttons -->
+            <button *ngIf="step === 3" (click)="skipGoal()" class="nav-btn skip-btn">
+                Skip for now
+            </button>
+            <button *ngIf="step === 4" (click)="skipPreferences()" class="nav-btn skip-btn">
+                Skip for now
+            </button>
+
+            <!-- Next/Complete Buttons -->
+            <button *ngIf="step < 5" (click)="next()" class="nav-btn next-btn"
+                [disabled]="(step === 3 && goalForm.invalid) || (step === 4 && preferencesForm.invalid)">
+                {{ step === 4 ? 'Complete' : 'Next' }}
+            </button>
+            <button *ngIf="step === 5" (click)="completeOnboarding()" class="nav-btn complete-btn">
+                Start Tracking
+            </button>
+        </div>
+    </div>
+</div>
