@@ -1,188 +1,677 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { Goal } from '../goal.model';
+import { SupabaseService } from './supabase.service';
+import { Goal, Milestone, convertSupabaseGoal } from '../goal.model';
+import { Observable, from, BehaviorSubject, of } from 'rxjs';
+import { map, switchMap, catchError } from 'rxjs/operators';
+
+export interface GoalFilters {
+  category?: string;
+  status?: string;
+  search?: string;
+  userId?: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class GoalService {
   private goalsSubject = new BehaviorSubject<Goal[]>([]);
-  public goals$ = this.goalsSubject.asObservable();
-  
-  private recentActivitySubject = new BehaviorSubject<string[]>([
-    'Completed a 5km run',
-    'Read 30 pages of "Atomic Habits"',
-    'Saved $200 towards financial goal',
-    'Attended leadership meeting'
-  ]);
-  public recentActivity$ = this.recentActivitySubject.asObservable();
+  private recentActivitySubject = new BehaviorSubject<any[]>([]);
+  private loadingSubject = new BehaviorSubject<boolean>(false);
 
-  constructor() {
-    this.initializeGoals();
+  constructor(private supabaseService: SupabaseService) {
+    this.loadGoals();
+    this.loadRecentActivity();
   }
 
-  private initializeGoals() {
-    const initialGoals: Goal[] = [
-      {
-        id: '1',
-        title: 'Run 5km 3x/week',
-        category: 'Health',
-        progress: { percent: 70 },
-        nextMilestone: 'Complete 2 more runs',
-        deadline: new Date('2024-02-15'),
-        status: 'active',
-        targetValue: 12,
-        targetUnit: 'runs',
-        description: 'Build endurance and improve cardiovascular health by running 5km three times per week. This will help me prepare for a half marathon later this year.',
-        milestones: [
-          { id: '1', title: 'Run 5km once', completed: true, dueDate: new Date('2024-01-15'), description: 'Complete your first 5km run to establish the baseline for your training program.' },
-          { id: '2', title: 'Run 5km twice', completed: true, dueDate: new Date('2024-01-22'), description: 'Run 5km twice in one week to build consistency and endurance.' },
-          { id: '3', title: 'Run 5km 3 times', completed: false, dueDate: new Date('2024-01-29'), description: 'Achieve the target frequency of running 5km three times per week.' },
-          { id: '4', title: 'Maintain for 4 weeks', completed: false, dueDate: new Date('2024-02-26'), description: 'Sustain the 3x/week running schedule for a full month to establish the habit.' }
-        ]
-      },
-      {
-        id: '2',
-        title: 'Read 12 books',
-        category: 'Personal',
-        progress: { percent: 50 },
-        nextMilestone: 'Finish "Atomic Habits"',
-        deadline: new Date('2024-12-31'),
-        status: 'active',
-        targetValue: 12,
-        targetUnit: 'books',
-        description: 'Expand knowledge and develop reading habit by completing 12 books this year. Focus on personal development and business books.',
-        milestones: [
-          { id: '1', title: 'Read 3 books', completed: true, dueDate: new Date('2024-03-31'), description: 'Complete the first quarter of your reading goal by finishing 3 books.' },
-          { id: '2', title: 'Read 6 books', completed: true, dueDate: new Date('2024-06-30'), description: 'Reach the halfway point of your annual reading challenge.' },
-          { id: '3', title: 'Read 9 books', completed: false, dueDate: new Date('2024-09-30'), description: 'Complete 75% of your reading goal with 9 books finished.' },
-          { id: '4', title: 'Read 12 books', completed: false, dueDate: new Date('2024-12-31'), description: 'Achieve your complete reading goal of 12 books for the year.' }
-        ]
-      },
-      {
-        id: '3',
-        title: 'Save $5,000',
-        category: 'Financial',
-        progress: { percent: 40 },
-        nextMilestone: 'Reach $2,000 saved',
-        deadline: new Date('2024-06-30'),
-        status: 'active',
-        targetValue: 5000,
-        targetUnit: 'dollars',
-        description: 'Build financial security by saving $5,000 for emergency fund and future investments. This will provide a safety net and enable better financial planning.',
-        milestones: [
-          { id: '1', title: 'Save $1,000', completed: true, dueDate: new Date('2024-02-28'), description: 'Reach the first milestone of $1,000 saved for your emergency fund.' },
-          { id: '2', title: 'Save $2,000', completed: false, dueDate: new Date('2024-03-31'), description: 'Double your savings to $2,000, building a solid foundation.' },
-          { id: '3', title: 'Save $3,500', completed: false, dueDate: new Date('2024-05-31'), description: 'Reach 70% of your savings goal with $3,500 accumulated.' },
-          { id: '4', title: 'Save $5,000', completed: false, dueDate: new Date('2024-06-30'), description: 'Achieve your complete savings goal of $5,000 for financial security.' }
-        ]
-      },
-      {
-        id: '4',
-        title: 'Get a promotion',
-        category: 'Career',
-        progress: { percent: 20 },
-        nextMilestone: 'Complete leadership course',
-        deadline: new Date('2024-03-15'),
-        status: 'overdue',
-        targetValue: 1,
-        targetUnit: 'promotion',
-        description: 'Advance my career by securing a promotion to senior level. This involves developing leadership skills, taking on more responsibilities, and demonstrating value to the organization.',
-        milestones: [
-          { id: '1', title: 'Complete leadership course', completed: false, dueDate: new Date('2024-02-15'), description: 'Finish the required leadership development program to qualify for promotion.' },
-          { id: '2', title: 'Update resume', completed: false, dueDate: new Date('2024-02-28'), description: 'Revise and enhance your resume to highlight recent achievements and skills.' },
-          { id: '3', title: 'Apply for positions', completed: false, dueDate: new Date('2024-03-10'), description: 'Submit applications for senior-level positions within the company.' },
-          { id: '4', title: 'Get promoted', completed: false, dueDate: new Date('2024-03-15'), description: 'Successfully secure the promotion to senior level position.' }
-        ]
-      },
-      {
-        id: '5',
-        title: 'Learn Spanish basics',
-        category: 'Personal',
-        progress: { percent: 100 },
-        nextMilestone: 'Goal completed!',
-        deadline: new Date('2024-01-31'),
-        status: 'completed',
-        targetValue: 1,
-        targetUnit: 'language level',
-        description: 'Learn basic Spanish conversation skills to enhance travel experiences and cultural understanding. Focus on practical phrases and everyday communication.',
-        milestones: [
-          { id: '1', title: 'Complete beginner course', completed: true, dueDate: new Date('2024-01-10'), description: 'Finish the introductory Spanish course covering basic grammar and vocabulary.' },
-          { id: '2', title: 'Practice for 30 days', completed: true, dueDate: new Date('2024-01-20'), description: 'Consistently practice Spanish for 30 consecutive days to build fluency.' },
-          { id: '3', title: 'Have first conversation', completed: true, dueDate: new Date('2024-01-25'), description: 'Successfully hold your first conversation in Spanish with a native speaker.' },
-          { id: '4', title: 'Master basic phrases', completed: true, dueDate: new Date('2024-01-31'), description: 'Achieve proficiency in essential Spanish phrases for everyday situations.' }
-        ]
+  get goals$(): Observable<Goal[]> {
+    return this.goalsSubject.asObservable();
+  }
+
+  get recentActivity$(): Observable<any[]> {
+    return this.recentActivitySubject.asObservable();
+  }
+
+  get loading$(): Observable<boolean> {
+    return this.loadingSubject.asObservable();
+  }
+
+  private async loadGoals() {
+    try {
+      this.loadingSubject.next(true);
+      const supabaseGoals = await this.supabaseService.getGoals();
+      const goals = supabaseGoals.map(convertSupabaseGoal);
+      
+      // Load milestones for each goal
+      for (const goal of goals) {
+        const milestones = await this.supabaseService.getMilestones(goal.id);
+        goal.milestones = milestones;
+        goal.nextMilestone = this.getNextMilestone(milestones);
       }
-    ];
-
-    this.goalsSubject.next(initialGoals);
+      
+      this.goalsSubject.next(goals);
+    } catch (error) {
+      console.error('Error loading goals:', error);
+      this.goalsSubject.next([]);
+    } finally {
+      this.loadingSubject.next(false);
+    }
   }
 
-  getGoals(): Observable<Goal[]> {
-    return this.goals$;
+  private async loadRecentActivity() {
+    try {
+      const userId = this.supabaseService.currentUserValue?.id;
+      if (!userId) {
+        this.recentActivitySubject.next([]);
+        return;
+      }
+
+      // Get recent activity from progress entries, milestones, and goals
+      const recentActivity = await this.getRecentActivityFromDatabase();
+      this.recentActivitySubject.next(recentActivity);
+    } catch (error) {
+      console.error('Error loading recent activity:', error);
+      this.recentActivitySubject.next([]);
+    }
   }
 
-  getGoalsSnapshot(): Goal[] {
-    return this.goalsSubject.value;
+  private async getRecentActivityFromDatabase(): Promise<any[]> {
+    const userId = this.supabaseService.currentUserValue?.id;
+    if (!userId) return [];
+
+    try {
+      // Get recent progress entries
+      const { data: progressEntries, error: progressError } = await this.supabaseService.client
+        .from('progress_entries')
+        .select(`
+          *,
+          goals!inner(title, category, unit)
+        `)
+        .eq('goals.user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (progressError) throw progressError;
+
+      // Get recent milestone completions
+      const { data: milestones, error: milestoneError } = await this.supabaseService.client
+        .from('milestones')
+        .select(`
+          *,
+          goals!inner(title, category)
+        `)
+        .eq('goals.user_id', userId)
+        .eq('completed', true)
+        .order('completed_at', { ascending: false })
+        .limit(10);
+
+      if (milestoneError) throw milestoneError;
+
+      // Get recent goal creations/updates
+      const { data: goals, error: goalError } = await this.supabaseService.client
+        .from('goals')
+        .select('*')
+        .eq('user_id', userId)
+        .order('updated_at', { ascending: false })
+        .limit(10);
+
+      if (goalError) throw goalError;
+
+      // Combine and format activities
+      const activities: any[] = [];
+
+      // Add progress entries
+      progressEntries?.forEach((entry: any) => {
+        activities.push({
+          type: 'progress',
+          title: `Updated progress for "${entry.goals.title}"`,
+          description: `Added ${entry.value} ${entry.goals.unit || 'units'}`,
+          timestamp: entry.created_at,
+          icon: 'trending_up',
+          category: entry.goals.category
+        });
+      });
+
+      // Add milestone completions
+      milestones?.forEach((milestone: any) => {
+        activities.push({
+          type: 'milestone',
+          title: `Completed milestone: "${milestone.title}"`,
+          description: `Goal: ${milestone.goals.title}`,
+          timestamp: milestone.completed_at,
+          icon: 'flag',
+          category: milestone.goals.category
+        });
+      });
+
+      // Add goal activities
+      goals?.forEach((goal: any) => {
+        const action = goal.status === 'completed' ? 'completed' : 
+                      goal.status === 'archived' ? 'archived' : 'updated';
+        activities.push({
+          type: 'goal',
+          title: `${action.charAt(0).toUpperCase() + action.slice(1)} goal: "${goal.title}"`,
+          description: goal.description || `Goal in ${goal.category} category`,
+          timestamp: goal.updated_at,
+          icon: action === 'completed' ? 'check_circle' : 'edit',
+          category: goal.category
+        });
+      });
+
+      // Sort by timestamp and return top 10
+      return activities
+        .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+        .slice(0, 10);
+
+    } catch (error) {
+      console.error('Error getting recent activity from database:', error);
+      return [];
+    }
   }
 
-  getGoalById(id: string): Goal | undefined {
-    return this.goalsSubject.value.find(goal => goal.id === id);
+  private addActivity(activity: any) {
+    const currentActivities = this.recentActivitySubject.value;
+    const updatedActivities = [activity, ...currentActivities].slice(0, 10);
+    this.recentActivitySubject.next(updatedActivities);
   }
 
-  addGoal(goal: Goal): void {
-    const currentGoals = this.goalsSubject.value;
-    this.goalsSubject.next([...currentGoals, goal]);
+  private getNextMilestone(milestones: Milestone[]): string {
+    const nextMilestone = milestones.find(m => !m.completed);
+    return nextMilestone?.title || '';
   }
 
-  updateGoal(updatedGoal: Goal): void {
-    const currentGoals = this.goalsSubject.value;
-    const updatedGoals = currentGoals.map(goal => 
-      goal.id === updatedGoal.id ? updatedGoal : goal
+  // Enhanced goal methods with filtering
+  getGoals(filters?: GoalFilters): Observable<Goal[]> {
+    return from(this.supabaseService.getGoalsWithFilters(filters)).pipe(
+      map(supabaseGoals => supabaseGoals.map(convertSupabaseGoal)),
+      catchError(error => {
+        console.error('Error fetching goals:', error);
+        return [];
+      })
     );
-    this.goalsSubject.next(updatedGoals);
   }
 
-  deleteGoal(goalId: string): void {
-    const currentGoals = this.goalsSubject.value;
-    const filteredGoals = currentGoals.filter(goal => goal.id !== goalId);
-    this.goalsSubject.next(filteredGoals);
+  getGoalsByCategory(category: string): Observable<Goal[]> {
+    return this.getGoals({ category });
   }
 
-  duplicateGoal(goal: Goal): void {
-    const duplicatedGoal: Goal = {
-      ...goal,
-      id: (this.goalsSubject.value.length + 1).toString(),
+  getGoalsByStatus(status: string): Observable<Goal[]> {
+    return this.getGoals({ status });
+  }
+
+  searchGoals(searchTerm: string): Observable<Goal[]> {
+    return this.getGoals({ search: searchTerm });
+  }
+
+  getGoal(id: string): Observable<Goal | null> {
+    return from(this.supabaseService.getGoalWithDetails(id)).pipe(
+      map(supabaseGoal => supabaseGoal ? convertSupabaseGoal(supabaseGoal) : null),
+      catchError(error => {
+        console.error('Error fetching goal:', error);
+        return of(null);
+      })
+    );
+  }
+
+  // Get a specific goal by ID
+  getGoalById(goalId: string): Observable<Goal | null> {
+    return from(this.getGoalByIdFromDatabase(goalId));
+  }
+
+  private async getGoalByIdFromDatabase(goalId: string): Promise<Goal | null> {
+    try {
+      const userId = this.supabaseService.currentUserValue?.id;
+      if (!userId) return null;
+
+      const { data: goal, error } = await this.supabaseService.client
+        .from('goals')
+        .select(`
+          *,
+          milestones(*),
+          progress_entries(*)
+        `)
+        .eq('id', goalId)
+        .eq('user_id', userId)
+        .single();
+
+      if (error) throw error;
+      return goal;
+    } catch (error) {
+      console.error('Error fetching goal by ID:', error);
+      return null;
+    }
+  }
+
+  createGoal(goal: Omit<Goal, 'id' | 'user_id' | 'created_at' | 'updated_at'>): Observable<Goal> {
+    return from(this.supabaseService.createGoal(goal)).pipe(
+      map(convertSupabaseGoal),
+      switchMap(newGoal => {
+        // Refresh goals list after creation
+        this.loadGoals();
+        this.addActivity({ type: 'goal', title: `Created goal: "${newGoal.title}"`, description: newGoal.description || `Goal in ${newGoal.category} category`, timestamp: newGoal.created_at, icon: 'add_circle', category: newGoal.category });
+        return [newGoal];
+      })
+    );
+  }
+
+  updateGoal(id: string, updates: Partial<Goal>): Observable<Goal> {
+    return from(this.supabaseService.updateGoal(id, updates)).pipe(
+      map(convertSupabaseGoal),
+      switchMap(updatedGoal => {
+        // Refresh goals list after update
+        this.loadGoals();
+        this.addActivity({ type: 'goal', title: `Updated goal: "${updatedGoal.title}"`, description: updatedGoal.description || `Goal in ${updatedGoal.category} category`, timestamp: updatedGoal.updated_at, icon: 'edit', category: updatedGoal.category });
+        return [updatedGoal];
+      })
+    );
+  }
+
+  deleteGoal(id: string): Observable<void> {
+    return from(this.supabaseService.deleteGoal(id)).pipe(
+      switchMap(() => {
+        // Refresh goals list after deletion
+        this.loadGoals();
+        this.addActivity({ type: 'goal', title: `Deleted goal`, description: `Goal with ID: ${id}`, timestamp: new Date(), icon: 'delete', category: 'Deleted' });
+        return [];
+      })
+    );
+  }
+
+  // Goal status management
+  markGoalComplete(goalId: string): Observable<Goal> {
+    return this.updateGoal(goalId, { status: 'completed' }).pipe(
+      switchMap(completedGoal => {
+        this.addActivity({ type: 'goal', title: `Completed goal: "${completedGoal.title}"`, description: `Goal in ${completedGoal.category} category`, timestamp: completedGoal.updated_at, icon: 'check_circle', category: completedGoal.category });
+        return [completedGoal];
+      })
+    );
+  }
+
+  archiveGoal(goalId: string): Observable<Goal> {
+    return this.updateGoal(goalId, { status: 'archived' }).pipe(
+      switchMap(archivedGoal => {
+        this.addActivity({ type: 'goal', title: `Archived goal: "${archivedGoal.title}"`, description: `Goal in ${archivedGoal.category} category`, timestamp: archivedGoal.updated_at, icon: 'archive', category: archivedGoal.category });
+        return [archivedGoal];
+      })
+    );
+  }
+
+  activateGoal(goalId: string): Observable<Goal> {
+    return this.updateGoal(goalId, { status: 'active' }).pipe(
+      switchMap(activatedGoal => {
+        this.addActivity({ type: 'goal', title: `Activated goal: "${activatedGoal.title}"`, description: `Goal in ${activatedGoal.category} category`, timestamp: activatedGoal.updated_at, icon: 'play_arrow', category: activatedGoal.category });
+        return [activatedGoal];
+      })
+    );
+  }
+
+  pauseGoal(goalId: string): Observable<Goal> {
+    return this.updateGoal(goalId, { status: 'paused' }).pipe(
+      switchMap(pausedGoal => {
+        this.addActivity({ type: 'goal', title: `Paused goal: "${pausedGoal.title}"`, description: `Goal in ${pausedGoal.category} category`, timestamp: pausedGoal.updated_at, icon: 'pause', category: pausedGoal.category });
+        return [pausedGoal];
+      })
+    );
+  }
+
+  duplicateGoal(goal: Goal): Observable<Goal> {
+    const { id, user_id, created_at, updated_at, ...goalData } = goal;
+    const duplicatedGoal = {
+      ...goalData,
       title: `${goal.title} (Copy)`,
-      progress: { percent: 0 },
-      status: 'active' as const,
-      milestones: goal.milestones.map(milestone => ({
-        ...milestone,
-        id: (Math.random() * 1000).toString(),
-        completed: false
-      }))
+      status: 'active' as const
     };
+    return this.createGoal(duplicatedGoal).pipe(
+      switchMap(newGoal => {
+        this.addActivity({ type: 'goal', title: `Duplicated goal: "${newGoal.title}"`, description: `Goal in ${newGoal.category} category`, timestamp: newGoal.created_at, icon: 'content_copy', category: newGoal.category });
+        return [newGoal];
+      })
+    );
+  }
+
+  // Milestone methods
+  getMilestones(goalId: string): Observable<Milestone[]> {
+    return from(this.supabaseService.getMilestones(goalId));
+  }
+
+  createMilestone(milestone: Omit<Milestone, 'id' | 'created_at' | 'updated_at'>): Observable<Milestone> {
+    console.log('GoalService: Creating milestone:', milestone);
+    return from(this.supabaseService.createMilestone(milestone)).pipe(
+      map(result => {
+        console.log('GoalService: Milestone created:', result);
+        return result;
+      }),
+      catchError(error => {
+        console.error('GoalService: Error creating milestone:', error);
+        throw error;
+      })
+    );
+  }
+
+  updateMilestone(id: string, updates: Partial<Milestone>): Observable<Milestone> {
+    console.log('GoalService: Updating milestone:', id, updates);
+    return from(this.supabaseService.updateMilestone(id, updates)).pipe(
+      map(result => {
+        console.log('GoalService: Milestone updated:', result);
+        return result;
+      }),
+      catchError(error => {
+        console.error('GoalService: Error updating milestone:', error);
+        throw error;
+      })
+    );
+  }
+
+  deleteMilestone(id: string): Observable<void> {
+    return from(this.supabaseService.deleteMilestone(id));
+  }
+
+  completeMilestone(id: string): Observable<Milestone> {
+    console.log('GoalService: Completing milestone:', id);
+    return from(this.supabaseService.completeMilestone(id)).pipe(
+      map(result => {
+        console.log('GoalService: Milestone completed:', result);
+        return result;
+      }),
+      catchError(error => {
+        console.error('GoalService: Error completing milestone:', error);
+        throw error;
+      })
+    );
+  }
+
+  // Progress methods
+  getProgressEntries(goalId: string): Observable<any[]> {
+    return from(this.supabaseService.getProgressEntries(goalId));
+  }
+
+  createProgressEntry(entry: any): Observable<any> {
+    return from(this.supabaseService.createProgressEntry(entry)).pipe(
+      switchMap((newEntry: any) => {
+        // Get the goal details for the activity
+        this.supabaseService.client
+          .from('goals')
+          .select('title, category, unit')
+          .eq('id', newEntry.goal_id)
+          .single()
+          .then(({ data: goal }) => {
+            if (goal) {
+              this.addActivity({ 
+                type: 'progress', 
+                title: `Updated progress for "${goal.title}"`, 
+                description: `${newEntry.value} ${goal.unit || 'units'}`, 
+                timestamp: newEntry.created_at, 
+                icon: 'trending_up', 
+                category: goal.category 
+              });
+            }
+          });
+        return [newEntry];
+      })
+    );
+  }
+
+  updateProgressEntry(id: string, updates: any): Observable<any> {
+    return from(this.supabaseService.updateProgressEntry(id, updates));
+  }
+
+  deleteProgressEntry(id: string): Observable<void> {
+    return from(this.supabaseService.deleteProgressEntry(id));
+  }
+
+  // Analytics and statistics
+  getGoalsStatistics(): Observable<any> {
+    return from(this.supabaseService.getGoalsStatistics());
+  }
+
+  getGoalsByCategoryStats(): Observable<any> {
+    return from(this.supabaseService.getGoalsByCategory());
+  }
+
+  // Dynamic statistics methods
+  async getDynamicStatistics(): Promise<any> {
+    const userId = this.supabaseService.currentUserValue?.id;
+    if (!userId) return this.getDefaultStatistics();
+
+    try {
+      // Get all goals for the user
+      const { data: goals, error: goalsError } = await this.supabaseService.client
+        .from('goals')
+        .select('*')
+        .eq('user_id', userId);
+
+      if (goalsError) {
+        throw goalsError;
+      }
+
+      // Get recent progress entries for streak calculation
+      const { data: progressEntries, error: progressError } = await this.supabaseService.client
+        .from('progress_entries')
+        .select('created_at, goals!inner(user_id)')
+        .eq('goals.user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(100);
+
+      if (progressError) {
+        throw progressError;
+      }
+
+      // Calculate statistics
+      const activeGoals = goals?.filter(g => g.status === 'active').length || 0;
+      const completedGoals = goals?.filter(g => g.status === 'completed').length || 0;
+      const totalGoals = goals?.length || 0;
+      
+      // Calculate overall progress based on completed goals and progress-based goals
+      let overallProgress = 0;
+      if (totalGoals > 0) {
+        const completedProgress = (completedGoals / totalGoals) * 100;
+        
+        // Also consider progress-based goals
+        const progressGoals = goals?.filter(g => g.status === 'active' && g.progress_type === 'percentage') || [];
+        let progressSum = 0;
+        progressGoals.forEach(goal => {
+          progressSum += goal.progress?.percent || 0;
+        });
+        
+        const averageProgress = progressGoals.length > 0 ? progressSum / progressGoals.length : 0;
+        
+        // Weight the calculation: 70% from completed goals, 30% from progress
+        overallProgress = Math.round((completedProgress * 0.7) + (averageProgress * 0.3));
+      }
+      
+      // Calculate streak (consecutive days with activity)
+      const streak = this.calculateStreak(progressEntries || []);
+      
+      // Calculate weekly completion
+      const thisWeek = this.getCompletedThisWeek(goals || []);
+      
+      // Calculate progress trend
+      const trend = this.calculateProgressTrend(goals || []);
+
+      return {
+        activeGoals,
+        completedGoals,
+        totalGoals,
+        overallProgress,
+        streak,
+        thisWeek,
+        trend
+      };
+    } catch (error) {
+      console.error('Error getting dynamic statistics:', error);
+      return this.getDefaultStatistics();
+    }
+  }
+
+  private getDefaultStatistics() {
+    return {
+      activeGoals: 0,
+      completedGoals: 0,
+      totalGoals: 0,
+      overallProgress: 0,
+      streak: 0,
+      thisWeek: 0,
+      trend: 'neutral'
+    };
+  }
+
+  private calculateStreak(progressEntries: any[]): number {
+    if (progressEntries.length === 0) return 0;
     
-    this.addGoal(duplicatedGoal);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Start of today
+    
+    // Get unique dates from progress entries
+    const dates = progressEntries.map(entry => {
+      const date = new Date(entry.created_at);
+      date.setHours(0, 0, 0, 0);
+      return date.getTime();
+    });
+    
+    const uniqueDates = [...new Set(dates)].sort((a, b) => b - a); // Sort descending
+    
+    let streak = 0;
+    let currentDate = new Date(today);
+    
+    // Check consecutive days starting from today
+    while (true) {
+      const dateTime = currentDate.getTime();
+      if (uniqueDates.includes(dateTime)) {
+        streak++;
+        currentDate.setDate(currentDate.getDate() - 1);
+      } else {
+        break;
+      }
+    }
+    
+    return streak;
   }
 
-  markGoalComplete(goalId: string): void {
-    const currentGoals = this.goalsSubject.value;
-    const updatedGoals = currentGoals.map(goal => 
-      goal.id === goalId 
-        ? { ...goal, progress: { percent: 100 }, status: 'completed' as const }
-        : goal
-    );
-    this.goalsSubject.next(updatedGoals);
+  private getCompletedThisWeek(goals: any[]): number {
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    oneWeekAgo.setHours(0, 0, 0, 0);
+    
+    return goals.filter(goal => {
+      if (goal.status !== 'completed') return false;
+      const completedDate = new Date(goal.updated_at);
+      return completedDate >= oneWeekAgo;
+    }).length;
   }
 
-  archiveGoal(goalId: string): void {
-    const currentGoals = this.goalsSubject.value;
-    const updatedGoals = currentGoals.map(goal => 
-      goal.id === goalId 
-        ? { ...goal, status: 'archived' as const }
-        : goal
-    );
-    this.goalsSubject.next(updatedGoals);
+  private calculateProgressTrend(goals: any[]): string {
+    if (goals.length === 0) return 'neutral';
+    
+    const completedGoals = goals.filter(g => g.status === 'completed').length;
+    const totalGoals = goals.length;
+    const completionRate = completedGoals / totalGoals;
+    
+    if (completionRate >= 0.7) return 'positive';
+    if (completionRate >= 0.4) return 'neutral';
+    return 'negative';
+  }
+
+  // Refresh goals data
+  refreshGoals(): void {
+    this.loadGoals();
+  }
+
+  // Subscribe to real-time goal updates
+  subscribeToGoals(callback: (payload: any) => void) {
+    return this.supabaseService.subscribeToGoals((payload) => {
+      callback(payload);
+      this.loadGoals(); // Refresh goals when changes occur
+      this.loadRecentActivity(); // Refresh recent activity
+    });
+  }
+
+  // Subscribe to real-time milestone updates
+  subscribeToMilestones(callback: (payload: any) => void) {
+    return this.supabaseService.subscribeToMilestones((payload) => {
+      callback(payload);
+      this.loadGoals(); // Refresh goals/milestones when changes occur
+      this.loadRecentActivity(); // Refresh recent activity
+    });
+  }
+
+  // Subscribe to real-time progress entry updates
+  subscribeToAllProgress(callback: (payload: any) => void) {
+    return this.supabaseService.subscribeToAllProgress((payload) => {
+      callback(payload);
+      this.loadGoals(); // Refresh goals/progress when changes occur
+      this.loadRecentActivity(); // Refresh recent activity
+    });
+  }
+
+  // Error handling utilities
+  handleError(error: any, operation: string): void {
+    console.error(`Error in ${operation}:`, error);
+    // You can add toast notifications here
+  }
+
+  // Get activity for a specific goal
+  getGoalActivity(goalId: string): Observable<any[]> {
+    return from(this.getGoalActivityFromDatabase(goalId));
+  }
+
+  private async getGoalActivityFromDatabase(goalId: string): Promise<any[]> {
+    try {
+      // Get progress entries for this goal
+      const { data: progressEntries, error: progressError } = await this.supabaseService.client
+        .from('progress_entries')
+        .select('*')
+        .eq('goal_id', goalId)
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (progressError) throw progressError;
+
+      // Get milestone completions for this goal
+      const { data: milestones, error: milestoneError } = await this.supabaseService.client
+        .from('milestones')
+        .select('*')
+        .eq('goal_id', goalId)
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (milestoneError) throw milestoneError;
+
+      // Combine and format activities
+      const activities: any[] = [];
+
+      // Add progress entries
+      progressEntries?.forEach(entry => {
+        activities.push({
+          id: `progress_${entry.id}`,
+          type: 'progress_updated',
+          title: 'Progress Updated',
+          description: `Updated progress to ${entry.progress_value}%`,
+          value: entry.progress_value,
+          created_at: entry.created_at
+        });
+      });
+
+      // Add milestone completions
+      milestones?.forEach(milestone => {
+        if (milestone.completed) {
+          activities.push({
+            id: `milestone_${milestone.id}`,
+            type: 'milestone_completed',
+            title: 'Milestone Completed',
+            description: `Completed "${milestone.title}" milestone`,
+            created_at: milestone.updated_at || milestone.created_at
+          });
+        }
+      });
+
+      // Sort by date (most recent first) and limit to 10
+      return activities
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        .slice(0, 10);
+
+    } catch (error) {
+      console.error('Error fetching goal activity:', error);
+      return [];
+    }
   }
 } 

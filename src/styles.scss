@@ -1,87 +1,248 @@
 /* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* CSS Reset and Base Styles */
-html {
-  box-sizing: border-box;
-  font-size: 16px;
-  font-family: 'Inter', 'Roboto', Arial, sans-serif;
-  background: #f4f6fa;
-  color: #222;
+:root {
+  /* Light theme variables */
+  --primary-color: #667eea;
+  --primary-light: #764ba2;
+  --secondary-color: #f8f9fa;
+  --text-primary: #1a202c;
+  --text-secondary: #4a5568;
+  --background-primary: #ffffff;
+  --background-secondary: #f8f9fa;
+  --border-color: #e9ecef;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --success-color: #28a745;
+  --warning-color: #ffc107;
+  --error-color: #dc3545;
+  --info-color: #17a2b8;
+  
+  /* Professional gradient backgrounds */
+  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --gradient-success: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  --gradient-warning: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  --gradient-danger: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  --gradient-dark: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  --gradient-light: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  
+  /* Professional background patterns */
+  --bg-pattern: radial-gradient(circle at 25% 25%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(118, 75, 162, 0.1) 0%, transparent 50%);
 }
 
-*, *:before, *:after {
-  box-sizing: inherit;
+[data-theme="dark"] {
+  /* Dark theme variables */
+  --primary-color: #667eea;
+  --primary-light: #764ba2;
+  --secondary-color: #2d3748;
+  --text-primary: #ffffff;
+  --text-secondary: #a0aec0;
+  --background-primary: #1a202c;
+  --background-secondary: #2d3748;
+  --border-color: #4a5568;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --success-color: #48bb78;
+  --warning-color: #ed8936;
+  --error-color: #f56565;
+  --info-color: #4299e1;
+  
+  /* Dark theme gradients */
+  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-secondary: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+  --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  --gradient-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  --gradient-dark: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  --gradient-light: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  
+  /* Dark theme background patterns */
+  --bg-pattern: radial-gradient(circle at 25% 25%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(118, 75, 162, 0.15) 0%, transparent 50%);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-  margin: 0;
-  padding: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--background-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  line-height: 1.6;
+}
+
+/* Professional background for main app container */
+.app-container {
   min-height: 100vh;
-  background: #f4f6fa;
+  background: var(--gradient-primary);
+  background-attachment: fixed;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bg-pattern);
+    pointer-events: none;
+  }
 }
 
-/* Custom CSS Variables for Colors */
-:root {
-  --primary-color: #6366f1;
-  --primary-light: #818cf8;
-  --primary-dark: #4f46e5;
-  --accent-color: #ec4899;
-  --success-color: #10b981;
-  --warning-color: #f59e0b;
-  --danger-color: #ef4444;
-  --text-primary: #1f2937;
-  --text-secondary: #6b7280;
-  --text-muted: #9ca3af;
-  --background-light: #f8fafc;
-  --background-white: #ffffff;
-  --background-card: #ffffff;
-  --border-color: #e5e7eb;
-  --border-light: #f3f4f6;
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --gradient-success: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  --gradient-warning: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-  --gradient-danger: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+/* Professional card backgrounds with better contrast */
+.professional-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  }
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+/* Dark theme card adjustments */
+[data-theme="dark"] .professional-card {
+  background: rgba(26, 32, 44, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
 
-/* Global Animation for Custom Notifications */
-@keyframes slideOut {
+/* Theme transition classes */
+.theme-light {
+  background: var(--background-primary);
+  color: var(--text-primary);
+}
+
+.theme-dark {
+  background: var(--background-primary);
+  color: var(--text-primary);
+}
+
+/* Global utility classes */
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.bg-primary { background-color: var(--background-primary); }
+.bg-secondary { background-color: var(--background-secondary); }
+.border-color { border-color: var(--border-color); }
+
+/* Enhanced text contrast for better visibility */
+.text-high-contrast {
+  color: var(--text-primary);
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.text-on-gradient {
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  font-weight: 600;
+}
+
+/* Smooth transitions for theme changes */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Material Design theme overrides with better contrast */
+.mat-mdc-card {
+  background-color: var(--background-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+.mat-mdc-form-field {
+  color: var(--text-primary) !important;
+}
+
+.mat-mdc-button {
+  color: var(--text-primary) !important;
+}
+
+/* Professional button styles */
+.btn-professional {
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* Professional loading states */
+.loading-shimmer {
+  background: linear-gradient(90deg, 
+    var(--background-secondary) 25%, 
+    var(--border-color) 50%, 
+    var(--background-secondary) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Professional animations */
+@keyframes fadeInUp {
   from {
-    transform: translateX(0);
-    opacity: 1;
+    opacity: 0;
+    transform: translateY(30px);
   }
   to {
-    transform: translateX(100%);
-    opacity: 0;
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-/* Snackbar Styles */
-.success-snackbar {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
-  color: white !important;
-  border-radius: 8px !important;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
+.fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
 }
 
-.error-snackbar {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
-  color: white !important;
-  border-radius: 8px !important;
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
+/* Professional shadows */
+.shadow-professional {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+              0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
-.mat-mdc-snack-bar-container {
-  margin-bottom: 20px !important;
+.shadow-professional-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+              0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
-.mat-mdc-snack-bar-container .mdc-snackbar__surface {
-  border-radius: 8px !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+.shadow-professional-xl {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+              0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
