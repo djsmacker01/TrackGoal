@@ -152,16 +152,16 @@ body {
 }
 
 /* Material Design theme overrides with better contrast */
-.mat-mdc-card {
+.mat-mdc-card:not(.category-card):not(.stat-card) {
   background-color: var(--background-primary) !important;
   color: var(--text-primary) !important;
 }
 
-.mat-mdc-form-field {
+.mat-mdc-form-field:not(.search-field) {
   color: var(--text-primary) !important;
 }
 
-.mat-mdc-button {
+.mat-mdc-button:not(.action-btn):not(.expand-btn):not(.filter-btn):not(.add-category-btn):not(.add-goal-btn) {
   color: var(--text-primary) !important;
 }
 
