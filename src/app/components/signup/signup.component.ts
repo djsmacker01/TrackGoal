@@ -372,9 +372,9 @@ export class SignupComponent implements OnInit {
         .then(result => {
           console.log('Signup result:', result);
           if (result.success) {
-            console.log('Signup successful, navigating to email verification');
-            // Navigate to email verification page
-            this.router.navigate(['/verify-email']);
+            console.log('Signup successful, navigating to dashboard');
+            // Navigate to dashboard directly (temporary bypass)
+            this.router.navigate(['/']);
           } else {
             console.log('Signup failed:', result.error);
             this.notificationService.error(
