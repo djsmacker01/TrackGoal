@@ -404,7 +404,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
       // Set up real-time subscriptions
       this.setupRealTimeSubscriptions();
-      
     } catch (error) {
       console.error('Error initializing dashboard:', error);
       this.notificationService.error('Error', 'Failed to load dashboard data. Please refresh the page.', 5000);
