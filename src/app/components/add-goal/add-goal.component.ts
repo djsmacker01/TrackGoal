@@ -13,6 +13,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NotificationService } from '../../services/notification.service';
 import { CategoryService, CategoryConfig } from '../../services/category.service';
+import { GoalService } from '../../services/goal.service';
 import { Category } from '../../goal.model';
 
 @Component({
@@ -178,7 +179,8 @@ export class AddGoalComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private notificationService: NotificationService,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private goalService: GoalService
   ) {}
 
   ngOnInit() {
@@ -201,11 +203,17 @@ export class AddGoalComponent implements OnInit {
       deadline: ['', [Validators.required, this.futureDateValidator()]]
     });
 
-    // Pre-select category if passed via query params
-    this.route.queryParams.subscribe(params => {
-      if (params['category']) {
-        this.goalForm.patchValue({ category: params['category'] });
+    // Add conditional validators for numerical goals
+    this.goalForm.get('goalType')?.valueChanges.subscribe(goalType => {
+      if (goalType === 'numerical') {
+        this.goalForm.get('targetValue')?.setValidators([Validators.required, Validators.min(1)]);
+        this.goalForm.get('targetUnit')?.setValidators([Validators.required]);
+      } else {
+        this.goalForm.get('targetValue')?.clearValidators();
+        this.goalForm.get('targetUnit')?.clearValidators();
       }
+      this.goalForm.get('targetValue')?.updateValueAndValidity();
+      this.goalForm.get('targetUnit')?.updateValueAndValidity();
     });
   }
 
@@ -219,9 +227,7 @@ export class AddGoalComponent implements OnInit {
 
   futureDateValidator() {
     return (control: any) => {
-      if (!control.value) {
-        return null;
-      }
+      if (!control.value) return null;
       
       const selectedDate = new Date(control.value);
       const today = new Date();
@@ -238,12 +244,45 @@ export class AddGoalComponent implements OnInit {
     if (this.goalForm.valid) {
       this.isSubmitting = true;
       
-      // Simulate API call
-      setTimeout(() => {
-        this.notificationService.success('Goal Created', 'Your new goal has been successfully created!', 3000);
-        this.router.navigate(['/']);
-        this.isSubmitting = false;
-      }, 1000);
+      const formData = this.goalForm.value;
+      
+      // Prepare goal data for Supabase
+      const goalData = {
+        title: formData.title,
+        description: formData.description || undefined,
+        category: formData.category,
+        goal_type: formData.goalType,
+        target_value: formData.targetValue || null,
+        unit: formData.targetUnit || null,
+        deadline: formData.deadline.toISOString(),
+        status: 'active' as const
+      };
+
+      // Create goal using GoalService
+      this.goalService.createGoal(goalData).subscribe({
+        next: (newGoal) => {
+          this.isSubmitting = false;
+          
+          this.notificationService.success(
+            'Goal Created', 
+            `"${newGoal.title}" has been added to your goals!`, 
+            5000
+          );
+          
+          // Navigate to goal detail page
+          this.router.navigate(['/goal-detail', newGoal.id]);
+        },
+        error: (error) => {
+          this.isSubmitting = false;
+          console.error('Error creating goal:', error);
+          
+          this.notificationService.error(
+            'Error', 
+            'Failed to create goal. Please try again.', 
+            5000
+          );
+        }
+      });
     } else {
       this.markFormGroupTouched();
     }
@@ -257,6 +296,6 @@ export class AddGoalComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/']);
+    this.router.navigate(['/dashboard']);
   }
 } 
