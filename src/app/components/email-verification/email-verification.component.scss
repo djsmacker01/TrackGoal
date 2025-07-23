@@ -1,0 +1,361 @@
+// Email Verification Component Styles
+.verification-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+  }
+}
+
+.verification-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 3rem;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  z-index: 1;
+  text-align: center;
+
+  @media (max-width: 768px) {
+    padding: 2rem;
+    margin: 1rem;
+  }
+}
+
+// Header Styles
+.verification-header {
+  margin-bottom: 2rem;
+
+  .header-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+
+    mat-icon {
+      font-size: 2.5rem;
+      color: white;
+    }
+  }
+
+  .verification-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-primary, #1a1a1a);
+    margin: 0 0 0.5rem 0;
+    line-height: 1.2;
+
+    @media (max-width: 768px) {
+      font-size: 1.75rem;
+    }
+  }
+
+  .verification-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary, #666);
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+// Loading State
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem 0;
+
+  .loading-text {
+    font-size: 1rem;
+    color: var(--text-secondary, #666);
+    margin: 0;
+  }
+}
+
+// Success State
+.success-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem 0;
+
+  .success-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+
+    mat-icon {
+      font-size: 2.5rem;
+      color: white;
+    }
+  }
+
+  .success-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--success-color, #10b981);
+    margin: 0;
+  }
+
+  .success-message {
+    font-size: 1rem;
+    color: var(--text-secondary, #666);
+    margin: 0;
+    text-align: center;
+  }
+}
+
+// Error State
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem 0;
+
+  .error-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px rgba(239, 68, 68, 0.3);
+
+    mat-icon {
+      font-size: 2.5rem;
+      color: white;
+    }
+  }
+
+  .error-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--danger-color, #ef4444);
+    margin: 0;
+  }
+
+  .error-message {
+    font-size: 1rem;
+    color: var(--text-secondary, #666);
+    margin: 0;
+    text-align: center;
+    line-height: 1.5;
+  }
+}
+
+// Main Content
+.verification-content {
+  .email-display {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(102, 126, 234, 0.2);
+
+    .email-icon {
+      color: var(--primary-color, #667eea);
+      font-size: 1.5rem;
+    }
+
+    .email-info {
+      text-align: left;
+      flex: 1;
+
+      .email-label {
+        font-size: 0.9rem;
+        color: var(--text-secondary, #666);
+        margin: 0 0 0.25rem 0;
+        font-weight: 500;
+      }
+
+      .email-address {
+        font-size: 1.1rem;
+        color: var(--text-primary, #1a1a1a);
+        margin: 0;
+        font-weight: 600;
+        word-break: break-all;
+      }
+    }
+  }
+
+  .instructions {
+    margin-bottom: 2rem;
+
+    .instruction-text {
+      font-size: 1rem;
+      color: var(--text-secondary, #666);
+      margin: 0;
+      line-height: 1.6;
+      text-align: center;
+    }
+  }
+
+  .resend-section {
+    margin-bottom: 2rem;
+
+    .resend-text {
+      font-size: 0.9rem;
+      color: var(--text-secondary, #666);
+      margin: 0 0 1rem 0;
+      text-align: center;
+    }
+
+    .resend-button {
+      width: 100%;
+      padding: 1rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      &:not(:disabled):hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+      }
+
+      mat-icon {
+        font-size: 1.2rem;
+      }
+
+      mat-spinner {
+        margin-right: 0.5rem;
+      }
+    }
+  }
+
+  .divider {
+    margin: 2rem 0;
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .navigation-links {
+    .signin-link {
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-1px);
+      }
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 480px) {
+  .verification-container {
+    padding: 1rem;
+  }
+
+  .verification-card {
+    padding: 1.5rem;
+  }
+
+  .verification-header {
+    .header-icon {
+      width: 60px;
+      height: 60px;
+
+      mat-icon {
+        font-size: 2rem;
+      }
+    }
+
+    .verification-title {
+      font-size: 1.5rem;
+    }
+
+    .verification-subtitle {
+      font-size: 1rem;
+    }
+  }
+
+  .email-display {
+    padding: 1rem;
+    flex-direction: column;
+    text-align: center;
+
+    .email-info {
+      text-align: center;
+    }
+  }
+}
+
+// Animation for success/error states
+.success-state,
+.error-state {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Loading animation
+.loading-state {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
+} 
