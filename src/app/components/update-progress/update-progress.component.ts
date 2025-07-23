@@ -16,6 +16,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Goal, Milestone } from '../../goal.model';
 import { NotificationService } from '../../services/notification.service';
+import { GoalService } from '../../services/goal.service';
 
 @Component({
   selector: 'app-update-progress',
@@ -96,14 +97,14 @@ import { NotificationService } from '../../services/notification.service';
                         </linearGradient>
                       </defs>
                     </svg>
-                    <span class="progress-text">{{ goal.progress.percent }}%</span>
+                    <span class="progress-text">{{ goal.progress?.percent || 0 }}%</span>
                   </div>
                 </div>
               </div>
               <div class="goal-stats">
                 <div class="stat-item">
                   <mat-icon>flag</mat-icon>
-                  <span>{{ goal.milestones.length }} milestones</span>
+                  <span>{{ goal.milestones?.length || 0 }} milestones</span>
                 </div>
                 <div class="stat-item">
                   <mat-icon>check_circle</mat-icon>
@@ -227,9 +228,6 @@ import { NotificationService } from '../../services/notification.service';
                                  class="milestone-checkbox">
                       <div class="milestone-info">
                         <span class="milestone-title">{{ milestone.title }}</span>
-                        <span class="milestone-due" *ngIf="milestone.dueDate">
-                          Due: {{ milestone.dueDate | date:'MMM dd, yyyy' }}
-                        </span>
                       </div>
                     </mat-checkbox>
                   </div>
@@ -268,14 +266,14 @@ import { NotificationService } from '../../services/notification.service';
                   <span class="comparison-label">Current Progress</span>
                   <div class="progress-bar-container">
                     <mat-progress-bar 
-                      [value]="goal.progress.percent" 
+                      [value]="goal.progress?.percent || 0" 
                       class="progress-bar current-progress">
                     </mat-progress-bar>
-                    <span class="progress-text">{{ goal.progress.percent }}%</span>
+                    <span class="progress-text">{{ goal.progress?.percent || 0 }}%</span>
                   </div>
                 </div>
                 
-                <div class="comparison-item" *ngIf="getNewProgressPercent() !== goal.progress.percent">
+                <div class="comparison-item" *ngIf="getNewProgressPercent() !== goal.progress?.percent">
                   <span class="comparison-label">New Progress</span>
                   <div class="progress-bar-container">
                     <mat-progress-bar 
@@ -288,7 +286,7 @@ import { NotificationService } from '../../services/notification.service';
               </div>
 
               <!-- Celebration Message -->
-              <div class="celebration-message" *ngIf="getNewProgressPercent() === 100 && goal.progress.percent < 100">
+                              <div class="celebration-message" *ngIf="getNewProgressPercent() === 100 && (goal.progress?.percent ?? 0) < 100">
                 <mat-icon class="celebration-icon">🎉</mat-icon>
                 <h4>Congratulations!</h4>
                 <p>You're about to complete your goal! This update will mark it as 100% complete.</p>
@@ -337,7 +335,8 @@ export class UpdateProgressComponent implements OnInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private goalService: GoalService
   ) {}
 
   ngOnInit() {
@@ -348,79 +347,37 @@ export class UpdateProgressComponent implements OnInit {
   }
 
   loadGoal(goalId: string) {
-    // Mock data - in real app this would come from a service
-    const mockGoals: Goal[] = [
-      {
-        id: '1',
-        title: 'Run 5km 3x/week',
-        category: 'Health',
-        progress: { percent: 70 },
-        nextMilestone: 'Complete 2 more runs',
-        deadline: new Date('2024-02-15'),
-        status: 'active',
-        targetValue: 12,
-        targetUnit: 'runs',
-        description: 'Build endurance and improve cardiovascular health by running 5km three times per week. This will help me prepare for a half marathon later this year.',
-        milestones: [
-          { id: '1', title: 'Run 5km once', completed: true, dueDate: new Date('2024-01-15'), description: 'Complete your first 5km run to establish the baseline for your training program.' },
-          { id: '2', title: 'Run 5km twice', completed: true, dueDate: new Date('2024-01-22'), description: 'Run 5km twice in one week to build consistency and endurance.' },
-          { id: '3', title: 'Run 5km 3 times', completed: false, dueDate: new Date('2024-01-29'), description: 'Achieve the target frequency of running 5km three times per week.' },
-          { id: '4', title: 'Maintain for 4 weeks', completed: false, dueDate: new Date('2024-02-26'), description: 'Sustain the 3x/week running schedule for a full month to establish the habit.' }
-        ]
+    this.goalService.getGoal(goalId).subscribe({
+      next: (goal) => {
+        this.goal = goal;
+        if (this.goal) {
+          this.initForm();
+        }
       },
-      {
-        id: '2',
-        title: 'Read 12 books',
-        category: 'Personal',
-        progress: { percent: 50 },
-        nextMilestone: 'Finish "Atomic Habits"',
-        deadline: new Date('2024-12-31'),
-        status: 'active',
-        targetValue: 12,
-        targetUnit: 'books',
-        description: 'Expand knowledge and develop reading habit by completing 12 books this year. Focus on personal development and business books.',
-        milestones: [
-          { id: '1', title: 'Read 3 books', completed: true, dueDate: new Date('2024-03-31'), description: 'Complete the first quarter of your reading goal by finishing 3 books.' },
-          { id: '2', title: 'Read 6 books', completed: true, dueDate: new Date('2024-06-30'), description: 'Reach the halfway point of your annual reading challenge.' },
-          { id: '3', title: 'Read 9 books', completed: false, dueDate: new Date('2024-09-30'), description: 'Complete 75% of your reading goal with 9 books finished.' },
-          { id: '4', title: 'Read 12 books', completed: false, dueDate: new Date('2024-12-31'), description: 'Achieve your complete reading goal of 12 books for the year.' }
-        ]
+      error: (error) => {
+        console.error('Error loading goal:', error);
+        this.notificationService.error(
+          'Error', 
+          'Failed to load goal details. Please try again.', 
+          5000
+        );
+        this.router.navigate(['/goals-list']);
       }
-    ];
-
-    this.goal = mockGoals.find(g => g.id === goalId) || null;
-    
-    if (this.goal) {
-      this.initForm();
-    }
+    });
   }
 
   initForm() {
     if (!this.goal) return;
 
     const formControls: any = {
-      notes: [''],
-      progressDate: [new Date()]
+      isCompleted: [this.goal?.progress?.percent === 100],
+      currentValue: [null],
+      targetValue: [null]
     };
-
-    // Add goal type specific controls
-    if (this.isBinaryGoal()) {
-      formControls.isCompleted = [this.goal.progress.percent === 100];
-    } else if (this.isNumericalGoal()) {
+      
+    if (this.goal?.progress?.percent) {
       const currentValue = Math.round((this.goal.progress.percent / 100) * (this.goal.targetValue || 0));
-      formControls.currentValue = [
-        currentValue, 
-        [
-          Validators.required, 
-          Validators.min(0), 
-          Validators.max(this.goal.targetValue || 0)
-        ]
-      ];
-    } else if (this.isPercentageGoal()) {
-      formControls.percentage = [
-        this.goal.progress.percent,
-        [Validators.required, Validators.min(0), Validators.max(100)]
-      ];
+      formControls.currentValue = [currentValue];
     }
 
     this.progressForm = this.fb.group(formControls);
@@ -455,7 +412,7 @@ export class UpdateProgressComponent implements OnInit {
   }
 
   getProgressOffset(): string {
-    if (!this.goal) return '0';
+    if (!this.goal?.progress) return '0';
     const circumference = 2 * Math.PI * 25;
     const offset = circumference - (this.goal.progress.percent / 100) * circumference;
     return offset.toString();
@@ -463,10 +420,12 @@ export class UpdateProgressComponent implements OnInit {
 
   getCompletedMilestones(): number {
     if (!this.goal) return 0;
-    return this.goal.milestones.filter(m => m.completed).length;
+    return this.goal?.milestones?.filter(m => m.completed).length || 0;
   }
 
-  getDaysRemaining(deadline: Date): string {
+  getDaysRemaining(deadline: string | undefined): string {
+    if (!deadline) return 'No deadline set';
+    
     const today = new Date();
     const deadlineDate = new Date(deadline);
     const diffTime = deadlineDate.getTime() - today.getTime();
@@ -486,7 +445,7 @@ export class UpdateProgressComponent implements OnInit {
 
   getCurrentValue(): number {
     if (!this.goal?.targetValue) return 0;
-    return Math.round((this.goal.progress.percent / 100) * this.goal.targetValue);
+    return Math.round((this.goal?.progress?.percent || 0) / 100 * this.goal.targetValue);
   }
 
   getNewProgressPercent(): number {
@@ -502,17 +461,17 @@ export class UpdateProgressComponent implements OnInit {
       return this.progressForm.get('percentage')?.value || 0;
     }
 
-    return this.goal.progress.percent;
+    return this.goal?.progress?.percent || 0;
   }
 
   getIncompleteMilestones(): Milestone[] {
     if (!this.goal) return [];
-    return this.goal.milestones.filter(m => !m.completed);
+    return this.goal?.milestones?.filter(m => !m.completed) || [];
   }
 
   getSelectedMilestones(): Milestone[] {
     if (!this.goal) return [];
-    return this.goal.milestones.filter(m => this.selectedMilestones.has(m.id));
+    return this.goal?.milestones?.filter(m => this.selectedMilestones.has(m.id)) || [];
   }
 
   onMilestoneToggle(event: any, milestone: Milestone) {
@@ -527,7 +486,7 @@ export class UpdateProgressComponent implements OnInit {
     if (!this.goal) return false;
 
     const newProgress = this.getNewProgressPercent();
-    const hasProgressChange = newProgress !== this.goal.progress.percent;
+    const hasProgressChange = newProgress !== this.goal?.progress?.percent;
     const hasMilestoneChanges = this.selectedMilestones.size > 0;
     const hasNotes = this.progressForm.get('notes')?.value?.trim();
 
@@ -540,41 +499,70 @@ export class UpdateProgressComponent implements OnInit {
       
       const formData = this.progressForm.value;
       const newProgressPercent = this.getNewProgressPercent();
-      const progressChange = newProgressPercent - this.goal.progress.percent;
+      const progressChange = newProgressPercent - (this.goal?.progress?.percent || 0);
       
       // Update goal progress
-      this.goal.progress.percent = newProgressPercent;
-      
-      // Update milestone completion status
-      this.selectedMilestones.forEach(milestoneId => {
-        const milestone = this.goal!.milestones.find(m => m.id === milestoneId);
-        if (milestone) {
-          milestone.completed = true;
+      this.goalService.updateGoal(this.goal.id, {
+        current_value: this.getCurrentValue(),
+        status: newProgressPercent === 100 ? 'completed' : this.goal.status
+      }).subscribe({
+        next: (updatedGoal) => {
+          // Update milestone completion status
+          const milestoneUpdates = Array.from(this.selectedMilestones).map(milestoneId => 
+            this.goalService.completeMilestone(milestoneId)
+          );
+          
+          if (milestoneUpdates.length > 0) {
+            Promise.all(milestoneUpdates).then(() => {
+              this.isSubmitting = false;
+              
+              // Show success message
+              let message = `Progress updated to ${newProgressPercent}%`;
+              if (progressChange > 0) {
+                message += ` (+${progressChange}%)`;
+              }
+              if (this.selectedMilestones.size > 0) {
+                message += ` and ${this.selectedMilestones.size} milestone(s) completed`;
+              }
+              
+              this.notificationService.success(
+                'Progress Updated', 
+                message, 
+                5000
+              );
+              
+              // Navigate back to goal detail page
+              this.router.navigate(['/goal-detail', this.goal!.id]);
+            });
+          } else {
+            this.isSubmitting = false;
+            
+            let message = `Progress updated to ${newProgressPercent}%`;
+            if (progressChange > 0) {
+              message += ` (+${progressChange}%)`;
+            }
+            
+            this.notificationService.success(
+              'Progress Updated', 
+              message, 
+              5000
+            );
+            
+            // Navigate back to goal detail page
+            this.router.navigate(['/goal-detail', this.goal!.id]);
+          }
+        },
+        error: (error) => {
+          this.isSubmitting = false;
+          console.error('Error updating progress:', error);
+          
+          this.notificationService.error(
+            'Error', 
+            'Failed to update progress. Please try again.', 
+            5000
+          );
         }
       });
-      
-      // Simulate API call
-      setTimeout(() => {
-        this.isSubmitting = false;
-        
-        // Show success message
-        let message = `Progress updated to ${newProgressPercent}%`;
-        if (progressChange > 0) {
-          message += ` (+${progressChange}%)`;
-        }
-        if (this.selectedMilestones.size > 0) {
-          message += ` and ${this.selectedMilestones.size} milestone(s) completed`;
-        }
-        
-        this.notificationService.success(
-          'Progress Updated', 
-          message, 
-          5000
-        );
-        
-        // Navigate back to goal detail page
-        this.router.navigate(['/goal-detail', this.goal!.id]);
-      }, 1500);
     } else {
       this.markFormGroupTouched();
     }
