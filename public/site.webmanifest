@@ -1,0 +1,25 @@
+{
+  "name": "TrackGoal - Achieve Your Goals with Smart Tracking",
+  "short_name": "TrackGoal",
+  "description": "TrackGoal helps you set, track, and achieve your personal and professional goals with intelligent progress tracking, milestone management, and detailed analytics.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1976d2",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/assets/icons/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icons/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["productivity", "lifestyle"],
+  "lang": "en",
+  "dir": "ltr"
+} 
