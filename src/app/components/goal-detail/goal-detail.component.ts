@@ -18,6 +18,7 @@ import { UpdateHistory } from '../../models/update-history.model';
 import { NotificationService } from '../../services/notification.service';
 import { DeleteConfirmationComponent } from '../delete-confirmation/delete-confirmation.component';
 import { GoalService } from '../../services/goal.service';
+import { SeoService } from '../../services/seo.service';
 import { Subscription } from 'rxjs';
 
 interface ProgressUpdate {
@@ -343,7 +344,8 @@ export class GoalDetailComponent implements OnInit, OnDestroy {
     private router: Router,
     private updateHistoryService: UpdateHistoryService,
     private notificationService: NotificationService,
-    private goalService: GoalService
+    private goalService: GoalService,
+    private seoService: SeoService
   ) {}
 
   ngOnInit() {
@@ -391,6 +393,9 @@ export class GoalDetailComponent implements OnInit, OnDestroy {
           console.log('Goal progress:', goal.progress);
           this.loadRecentActivity();
           this.loadUpdateHistory();
+          
+          // Update SEO for this specific goal
+          this.seoService.setGoalDetailSEO(goal.title, goal.description || 'Track progress and manage milestones for this goal');
         } else {
           // Goal not found, navigate back
           this.notificationService.error('Goal not found', 'The requested goal could not be found');
