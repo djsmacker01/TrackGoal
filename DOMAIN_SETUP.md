@@ -38,6 +38,7 @@ netlify deploy --prod --dir=dist/TrackGoal-app/browser
    - Click "Add custom domain"
    - Enter your domain (e.g., `yourdomain.com` or `www.yourdomain.com`)
    - Click "Verify"
+   
 
 2. **Netlify will provide DNS records to configure in Namecheap**
 
@@ -104,10 +105,10 @@ netlify deploy --prod --dir=dist/TrackGoal-app/browser
 2. Navigate to Authentication → URL Configuration
 3. Add your custom domain URLs:
    ```
-   https://yourdomain.com/auth/callback
-   https://www.yourdomain.com/auth/callback
-   https://yourdomain.com/auth/confirm
-   https://www.yourdomain.com/auth/confirm
+   https://trackgoal.online/auth/callback
+   https://www.trackgoal.online/auth/callback
+   https://trackgoal.online/auth/confirm
+   https://www.trackgoal.online/auth/confirm
    ```
 
 ### Update Site URL:
