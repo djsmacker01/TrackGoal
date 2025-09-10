@@ -377,9 +377,23 @@ export class SignupComponent implements OnInit {
             this.router.navigate(['/']);
           } else {
             console.log('Signup failed:', result.error);
+            
+            // Provide specific error messages based on the error type
+            let errorMessage = 'Failed to create account. Please try again.';
+            
+            if (result.error?.message?.includes('confirmation email') || result.error?.message?.includes('500')) {
+              errorMessage = 'Email confirmation service is temporarily unavailable. Please try again later or contact support.';
+            } else if (result.error?.message?.includes('already registered')) {
+              errorMessage = 'An account with this email already exists. Please try logging in instead.';
+            } else if (result.error?.message?.includes('password')) {
+              errorMessage = 'Password requirements not met. Please use a stronger password.';
+            } else if (result.error?.message) {
+              errorMessage = result.error.message;
+            }
+            
             this.notificationService.error(
               'Signup Failed', 
-              result.error?.message || 'Failed to create account. Please try again.', 
+              errorMessage, 
               5000
             );
           }
