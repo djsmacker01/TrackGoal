@@ -1,0 +1,35 @@
+<svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background with gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="iconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f0f0f0;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Main background circle -->
+  <circle cx="30" cy="30" r="25" fill="url(#bgGradient)" stroke="#ffffff" stroke-width="2"/>
+  
+  <!-- Target/Bullseye design representing goals -->
+  <circle cx="30" cy="30" r="18" fill="none" stroke="url(#iconGradient)" stroke-width="2" opacity="0.8"/>
+  <circle cx="30" cy="30" r="10" fill="none" stroke="url(#iconGradient)" stroke-width="2" opacity="0.9"/>
+  <circle cx="30" cy="30" r="3" fill="url(#iconGradient)"/>
+  
+  <!-- Progress indicator arrow -->
+  <path d="M15 15 L23 23 M23 23 L19 27 M23 23 L27 19" stroke="url(#iconGradient)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+  
+  <!-- Checkmark for completed goals -->
+  <path d="M42 12 L46 16 L50 8" stroke="url(#iconGradient)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>
+  
+  <!-- TrackGoal Text -->
+  <text x="70" y="25" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="url(#bgGradient)">
+    TrackGoal
+  </text>
+  <text x="70" y="45" font-family="Arial, sans-serif" font-size="12" fill="#666">
+    Achieve Your Goals
+  </text>
+</svg>
