@@ -66,7 +66,7 @@ export class AuthService {
     try {
       this.setLoading(true);
       
-      // TEMPORARY: Skip email confirmation for testing
+      // Try signup with email confirmation
       const response = await this.supabaseService.client.auth.signUp({
         email,
         password,
@@ -77,6 +77,20 @@ export class AuthService {
       });
       
       if (response.error) {
+        // If email confirmation fails, try without it for development
+        if (response.error.message?.includes('confirmation email') || response.error.message?.includes('500')) {
+          console.warn('Email confirmation failed, trying without confirmation for development...');
+          
+          // For development: try to sign in directly if user already exists
+          const signInResponse = await this.supabaseService.client.auth.signInWithPassword({
+            email,
+            password
+          });
+          
+          if (signInResponse.data.user) {
+            return { success: true };
+          }
+        }
         const error = this.parseSupabaseError(response.error);
         return { success: false, error };
       }
