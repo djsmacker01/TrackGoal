@@ -5,20 +5,24 @@ import { ThemeService } from './services/theme.service';
 import { SeoService } from './services/seo.service';
 import { LoadingSpinnerComponent } from './components/loading-spinner/loading-spinner.component';
 import { OfflineModeComponent } from './components/offline-mode/offline-mode.component';
+import { AppHeaderComponent } from './components/app-header/app-header.component';
 import { SupabaseService } from './services/supabase.service';
 import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, LoadingSpinnerComponent, OfflineModeComponent],
+  imports: [CommonModule, RouterOutlet, LoadingSpinnerComponent, OfflineModeComponent, AppHeaderComponent],
   template: `
     <div class="app-container">
       <div *ngIf="isLoading" class="loading-overlay">
         <app-loading-spinner></app-loading-spinner>
       </div>
+      <app-header *ngIf="!isOfflineMode"></app-header>
       <app-offline-mode *ngIf="isOfflineMode"></app-offline-mode>
-      <router-outlet *ngIf="!isOfflineMode"></router-outlet>
+      <main class="main-content" *ngIf="!isOfflineMode">
+        <router-outlet></router-outlet>
+      </main>
     </div>
   `,
   styles: [`
@@ -54,6 +58,11 @@ import { filter } from 'rxjs/operators';
       justify-content: center;
       z-index: 9999;
       backdrop-filter: blur(2px);
+    }
+    
+    .main-content {
+      flex: 1;
+      padding-top: 0;
     }
   `]
 })
