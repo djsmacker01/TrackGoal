@@ -77,11 +77,29 @@ export class SupabaseService {
   private currentSession = new BehaviorSubject<Session | null>(null);
 
   constructor() {
-    this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey);
-    this.initializeAuth();
+    try {
+      // Validate environment variables
+      if (!environment.supabaseUrl || environment.supabaseUrl === 'YOUR_NEW_SUPABASE_URL_HERE') {
+        throw new Error('Supabase URL not configured');
+      }
+      if (!environment.supabaseAnonKey || environment.supabaseAnonKey === 'YOUR_NEW_SUPABASE_ANON_KEY_HERE') {
+        throw new Error('Supabase API key not configured');
+      }
+      
+      this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey);
+      this.initializeAuth();
+    } catch (error) {
+      console.error('Failed to initialize Supabase:', error);
+      // Create a mock client to prevent app crashes
+      this.supabase = null as any;
+    }
   }
 
   get client(): SupabaseClient {
+    if (!this.supabase) {
+      console.error('Supabase client not initialized');
+      throw new Error('Supabase client not available');
+    }
     return this.supabase;
   }
 
