@@ -253,8 +253,8 @@ export class TouchInteractionService {
 
     public optimizeScroll(element: HTMLElement): void {
         // Add smooth scrolling and momentum
-        element.style.webkitOverflowScrolling = 'touch';
-        element.style.overflowScrolling = 'touch';
+        (element.style as any).webkitOverflowScrolling = 'touch';
+        (element.style as any).overflowScrolling = 'touch';
 
         // Prevent overscroll bounce on iOS
         element.addEventListener('touchmove', (e) => {

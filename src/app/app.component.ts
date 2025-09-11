@@ -6,13 +6,14 @@ import { SeoService } from './services/seo.service';
 import { LoadingSpinnerComponent } from './components/loading-spinner/loading-spinner.component';
 import { OfflineModeComponent } from './components/offline-mode/offline-mode.component';
 import { AppHeaderComponent } from './components/app-header/app-header.component';
+import { MobileNavigationComponent } from './components/mobile-navigation/mobile-navigation.component';
 import { SupabaseService } from './services/supabase.service';
 import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, LoadingSpinnerComponent, OfflineModeComponent, AppHeaderComponent],
+  imports: [CommonModule, RouterOutlet, LoadingSpinnerComponent, OfflineModeComponent, AppHeaderComponent, MobileNavigationComponent],
   template: `
     <div class="app-container">
       <div *ngIf="isLoading" class="loading-overlay">
@@ -23,6 +24,7 @@ import { filter } from 'rxjs/operators';
       <main class="main-content" *ngIf="!isOfflineMode">
         <router-outlet></router-outlet>
       </main>
+      <app-mobile-navigation *ngIf="!isOfflineMode"></app-mobile-navigation>
     </div>
   `,
   styles: [`
@@ -75,12 +77,12 @@ export class AppComponent implements OnInit {
     private seoService: SeoService,
     private router: Router,
     private supabaseService: SupabaseService
-  ) {}
+  ) { }
 
   ngOnInit() {
     // Theme service is initialized in constructor
     // This ensures theme is applied on app startup
-    
+
     // Check if Supabase is available
     try {
       this.supabaseService.client;
@@ -89,14 +91,14 @@ export class AppComponent implements OnInit {
       console.warn('Supabase not available, running in offline mode');
       this.isOfflineMode = true;
     }
-    
+
     // Set up loading state for route changes
     this.router.events.pipe(
       filter(event => event instanceof NavigationStart)
     ).subscribe(() => {
       this.isLoading = true;
     });
-    
+
     // Set up SEO for route changes
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
@@ -104,14 +106,14 @@ export class AppComponent implements OnInit {
       this.isLoading = false;
       this.updateSEOForCurrentRoute();
     });
-    
+
     // Set initial SEO
     this.updateSEOForCurrentRoute();
   }
 
   private updateSEOForCurrentRoute(): void {
     const currentUrl = this.router.url;
-    
+
     if (currentUrl === '/') {
       this.seoService.setDashboardSEO();
     } else if (currentUrl === '/goals-list') {

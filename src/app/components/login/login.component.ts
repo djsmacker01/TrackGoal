@@ -61,6 +61,7 @@ export interface SupabaseLoginData {
                      placeholder="Enter your email" 
                      autocomplete="email"
                      name="email"
+                     inputmode="email"
                      required>
               <mat-icon matSuffix>email</mat-icon>
               <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
@@ -79,10 +80,12 @@ export interface SupabaseLoginData {
                      placeholder="Enter your password" 
                      autocomplete="current-password"
                      name="password"
+                     inputmode="text"
                      required>
               <button mat-icon-button matSuffix type="button" 
                       (click)="togglePasswordVisibility()" 
-                      [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
+                      [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+                      class="touch-target">
                 <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
               </button>
               <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
@@ -92,16 +95,16 @@ export interface SupabaseLoginData {
 
             <!-- Remember Me & Forgot Password -->
             <div class="form-options">
-              <mat-checkbox formControlName="rememberMe" class="remember-me">
+              <mat-checkbox formControlName="rememberMe" class="remember-me touch-target">
                 Remember me
               </mat-checkbox>
-              <a routerLink="/forgot-password" class="forgot-password">Forgot Password?</a>
+              <a routerLink="/forgot-password" class="forgot-password touch-target">Forgot Password?</a>
             </div>
 
             <!-- Sign In Button -->
             <button type="submit" 
                     mat-raised-button 
-                    class="login-btn" 
+                    class="login-btn touch-target" 
                     [disabled]="loginForm.invalid || isSubmitting">
               <mat-icon *ngIf="!isSubmitting">login</mat-icon>
               <mat-icon *ngIf="isSubmitting" class="spinning">refresh</mat-icon>
@@ -117,11 +120,11 @@ export interface SupabaseLoginData {
 
             <!-- Social Login Buttons -->
             <div class="social-login">
-              <button type="button" mat-outlined-button class="social-btn google-btn" (click)="signInWithGoogle()">
+              <button type="button" mat-outlined-button class="social-btn google-btn touch-target" (click)="signInWithGoogle()">
                 <mat-icon>google</mat-icon>
                 Google
               </button>
-              <button type="button" mat-outlined-button class="social-btn github-btn" (click)="signInWithGitHub()">
+              <button type="button" mat-outlined-button class="social-btn github-btn touch-target" (click)="signInWithGitHub()">
                 <mat-icon>code</mat-icon>
                 GitHub
               </button>
@@ -130,7 +133,7 @@ export interface SupabaseLoginData {
             <!-- Sign Up Link -->
             <div class="signup-link">
               <p>Don't have an account? 
-                <a routerLink="/signup" class="link">Sign Up</a>
+                <a routerLink="/signup" class="link touch-target">Sign Up</a>
               </p>
             </div>
           </form>
@@ -179,7 +182,7 @@ export class LoginComponent implements OnInit {
     private snackBar: MatSnackBar,
     private authService: AuthService,
     private notificationService: NotificationService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.initForm();
@@ -200,9 +203,9 @@ export class LoginComponent implements OnInit {
   onSubmit() {
     if (this.loginForm.valid) {
       this.isSubmitting = true;
-      
+
       const formData: LoginData = this.loginForm.value;
-      
+
       // Call AuthService signin
       this.authService.signIn(formData.email, formData.password)
         .then(result => {
@@ -211,8 +214,8 @@ export class LoginComponent implements OnInit {
             this.router.navigate(['/']);
           } else {
             this.notificationService.error(
-              'Login Failed', 
-              result.error?.message || 'Invalid email or password. Please try again.', 
+              'Login Failed',
+              result.error?.message || 'Invalid email or password. Please try again.',
               5000
             );
           }
@@ -220,8 +223,8 @@ export class LoginComponent implements OnInit {
         .catch(error => {
           console.error('Login error:', error);
           this.notificationService.error(
-            'Login Failed', 
-            'An unexpected error occurred. Please try again.', 
+            'Login Failed',
+            'An unexpected error occurred. Please try again.',
             5000
           );
         })
