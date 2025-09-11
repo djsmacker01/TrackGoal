@@ -33,13 +33,13 @@
   ],
   "icons": [
     {
-      "src": "/favicon.ico",
-      "sizes": "16x16 32x32",
-      "type": "image/x-icon"
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
     },
     {
       "src": "/logo.svg",
-      "sizes": "any",
+      "sizes": "16x16 32x32",
       "type": "image/svg+xml"
     },
     {
