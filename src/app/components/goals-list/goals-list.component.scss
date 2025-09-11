@@ -761,15 +761,53 @@
   }
 }
 
-// Responsive Design
+// Enhanced Mobile Responsive Design
+@media (max-width: 1024px) {
+  .main-content {
+    padding: 1.5rem;
+  }
+  
+  .page-header .header-content {
+    padding: 0 1.5rem;
+    
+    .header-text .page-title {
+      font-size: 1.75rem;
+    }
+  }
+  
+  .filters-section .filters-card {
+    padding: 1.5rem;
+  }
+  
+  .goals-section .goals-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
 @media (max-width: 768px) {
+  .goals-list-container {
+    padding-bottom: 80px; /* Space for mobile navigation */
+  }
+  
   .main-content {
     padding: 1rem;
   }
 
-  .page-header .header-content {
+  .page-header {
+    padding: 1rem 0;
+    
+    .header-content {
     padding: 0 1rem;
     gap: 1rem;
+      flex-direction: column;
+      align-items: stretch;
+
+      .header-left {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
 
     .back-btn {
       width: 44px;
@@ -778,33 +816,61 @@
     }
 
     .header-text {
+          flex: 1;
+          text-align: center;
+          
       .page-title {
-        font-size: 1.75rem;
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
         
         &::after {
-          width: 50px;
+              width: 40px;
           height: 2px;
         }
       }
 
       .page-subtitle {
-        font-size: 1rem;
-        padding-left: 0.75rem;
+            font-size: 0.9rem;
+            padding-left: 0.5rem;
         
         &::before {
-          font-size: 0.8rem;
+              font-size: 0.7rem;
+            }
+          }
+        }
+      }
+
+      .header-actions {
+        width: 100%;
+        
+        .add-goal-btn {
+          width: 100%;
+          padding: 12px 16px;
+          font-size: 14px;
+          justify-content: center;
         }
       }
     }
-
-    .header-actions .add-goal-btn {
-      padding: 0.5rem 1rem;
-      font-size: 0.9rem;
-    }
   }
 
-  .filters-section .filters-card {
-    padding: 1.5rem;
+  .filters-section {
+    margin-bottom: 1.5rem;
+    
+    .filters-card {
+      padding: 1rem;
+
+      .search-section {
+        margin-bottom: 1.5rem;
+      }
+      
+      .filter-label {
+        font-size: 0.9rem;
+        margin-bottom: 0.75rem;
+      }
+
+      .category-filters,
+      .status-filters {
+        margin-bottom: 1rem;
 
     .category-tabs,
     .status-tabs {
@@ -814,6 +880,7 @@
       .status-tab {
         padding: 0.5rem 0.75rem;
         font-size: 0.8rem;
+            border-radius: 12px;
 
         .category-icon {
           font-size: 1rem;
@@ -821,39 +888,176 @@
 
         .status-icon {
           font-size: 1rem;
+            }
+            
+            .category-count,
+            .status-count {
+              font-size: 0.7rem;
+              padding: 0.2rem 0.4rem;
+            }
+          }
         }
       }
     }
   }
 
-  .results-summary .summary-content {
+  .results-summary {
+    margin-bottom: 1.5rem;
+    
+    .summary-content {
     flex-direction: column;
-    gap: 1rem;
+      gap: 0.75rem;
     text-align: center;
+      padding: 0.75rem 1rem;
+      
+      .results-info {
+        flex-direction: column;
+        gap: 0.25rem;
+        
+        .results-count {
+          font-size: 0.9rem;
+        }
+        
+        .results-text {
+          font-size: 0.8rem;
+        }
+      }
+      
+      .clear-filters-btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+      }
+    }
   }
 
-  .goals-section .goals-grid {
+  .goals-section {
+    .goals-grid {
     grid-template-columns: 1fr;
     gap: 1rem;
 
     .goal-card {
       padding: 1rem;
+        border-radius: 16px;
 
       .goal-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.75rem;
+          margin-bottom: 0.75rem;
+
+          .goal-info {
+            width: 100%;
+            
+            .goal-title {
+              font-size: 1rem;
+              margin-bottom: 0.4rem;
+            }
+            
+            .category-chip {
+              font-size: 0.7rem;
+              padding: 0.2rem 0.5rem;
+            }
+          }
 
         .goal-status {
           align-self: flex-end;
+            
+            .status-indicator {
+              font-size: 0.75rem;
+              padding: 0.2rem 0.4rem;
+              
+              mat-icon {
+                font-size: 0.9rem;
+              }
+            }
+          }
+        }
+        
+        .goal-progress {
+          margin-bottom: 0.75rem;
+          
+          .progress-header {
+            margin-bottom: 0.4rem;
+            
+            .progress-label {
+              font-size: 0.75rem;
+            }
+            
+            .progress-percentage {
+              font-size: 0.8rem;
+            }
+          }
+          
+          .progress-container .custom-progress-bar {
+            height: 6px;
+          }
+        }
+        
+        .goal-details {
+          margin-bottom: 0.75rem;
+          
+          .detail-item {
+            margin-bottom: 0.4rem;
+            
+            .detail-icon {
+              font-size: 0.9rem;
+            }
+            
+            .detail-text {
+              font-size: 0.8rem;
+            }
         }
       }
 
       .goal-actions {
         flex-wrap: wrap;
+          gap: 0.4rem;
 
         .action-btn {
-          min-width: 80px;
+            flex: 1;
+            min-width: 70px;
+            font-size: 0.75rem;
+            padding: 0.4rem 0.6rem;
+            border-radius: 8px;
+            
+            mat-icon {
+              font-size: 0.9rem;
+              margin-right: 0.2rem;
+            }
+          }
+
+          .more-btn {
+            padding: 0.4rem;
+            
+            mat-icon {
+              font-size: 1rem;
+            }
+          }
+        }
+      }
+    }
+    
+    .empty-state {
+      .empty-card {
+        padding: 2rem 1rem;
+        
+        .empty-content {
+          .empty-icon {
+            font-size: 3rem;
+          }
+          
+          .empty-title {
+            font-size: 1.25rem;
+          }
+          
+          .empty-subtitle {
+            font-size: 0.9rem;
+          }
+          
+          .create-goal-btn {
+            padding: 0.75rem 1.5rem;
+            font-size: 0.9rem;
+          }
         }
       }
     }
@@ -862,12 +1066,13 @@
 
 @media (max-width: 480px) {
   .page-header {
-    padding: 1rem 0;
+    padding: 0.75rem 0;
 
     .header-content {
       padding: 0 0.75rem;
       gap: 0.75rem;
 
+      .header-left {
       .back-btn {
         width: 40px;
         height: 40px;
@@ -880,28 +1085,29 @@
 
       .header-text {
         .page-title {
-          font-size: 1.5rem;
-          margin-bottom: 0.25rem;
+            font-size: 1.25rem;
+            margin-bottom: 0.2rem;
           
           &::after {
-            width: 40px;
+              width: 30px;
             height: 2px;
             bottom: -2px;
           }
         }
 
         .page-subtitle {
-          font-size: 0.9rem;
-          padding-left: 0.5rem;
+            font-size: 0.8rem;
+            padding-left: 0.4rem;
           
           &::before {
-            font-size: 0.7rem;
+              font-size: 0.6rem;
+            }
           }
         }
       }
 
       .header-actions .add-goal-btn {
-        padding: 0.5rem 0.75rem;
+        padding: 10px 14px;
         font-size: 0.8rem;
         
         mat-icon {
@@ -911,12 +1117,214 @@
     }
   }
 
-  .filters-section .filters-card {
-    padding: 1rem;
+  .filters-section {
+    margin-bottom: 1rem;
+    
+    .filters-card {
+      padding: 0.75rem;
+
+      .search-section {
+        margin-bottom: 1rem;
+      }
+      
+      .filter-label {
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .category-filters,
+      .status-filters {
+        margin-bottom: 0.75rem;
 
     .category-tabs,
     .status-tabs {
-      grid-template-columns: repeat(2, 1fr);
+          gap: 0.4rem;
+
+          .category-tab,
+          .status-tab {
+            padding: 0.4rem 0.6rem;
+            font-size: 0.75rem;
+            border-radius: 10px;
+
+            .category-icon,
+            .status-icon {
+              font-size: 0.9rem;
+            }
+            
+            .category-count,
+            .status-count {
+              font-size: 0.65rem;
+              padding: 0.15rem 0.3rem;
+            }
+          }
+        }
+      }
     }
+  }
+
+  .results-summary {
+    margin-bottom: 1rem;
+    
+    .summary-content {
+      padding: 0.5rem 0.75rem;
+      
+      .results-info {
+        .results-count {
+          font-size: 0.85rem;
+        }
+        
+        .results-text {
+          font-size: 0.75rem;
+        }
+      }
+      
+      .clear-filters-btn {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.75rem;
+      }
+    }
+  }
+
+  .goals-section {
+    .goals-grid {
+      gap: 0.75rem;
+
+      .goal-card {
+        padding: 0.75rem;
+        border-radius: 12px;
+
+        .goal-header {
+          gap: 0.5rem;
+          margin-bottom: 0.5rem;
+
+          .goal-info {
+            .goal-title {
+              font-size: 0.9rem;
+              margin-bottom: 0.3rem;
+            }
+            
+            .category-chip {
+              font-size: 0.65rem;
+              padding: 0.15rem 0.4rem;
+            }
+          }
+
+          .goal-status {
+            .status-indicator {
+              font-size: 0.7rem;
+              padding: 0.15rem 0.3rem;
+              
+              mat-icon {
+                font-size: 0.8rem;
+              }
+            }
+          }
+        }
+        
+        .goal-progress {
+          margin-bottom: 0.5rem;
+          
+          .progress-header {
+            margin-bottom: 0.3rem;
+            
+            .progress-label {
+              font-size: 0.7rem;
+            }
+            
+            .progress-percentage {
+              font-size: 0.75rem;
+            }
+          }
+          
+          .progress-container .custom-progress-bar {
+            height: 5px;
+          }
+        }
+        
+        .goal-details {
+          margin-bottom: 0.5rem;
+          
+          .detail-item {
+            margin-bottom: 0.3rem;
+            
+            .detail-icon {
+              font-size: 0.8rem;
+            }
+            
+            .detail-text {
+              font-size: 0.75rem;
+            }
+          }
+        }
+
+        .goal-actions {
+          gap: 0.3rem;
+
+          .action-btn {
+            min-width: 60px;
+            font-size: 0.7rem;
+            padding: 0.3rem 0.5rem;
+            border-radius: 6px;
+            
+            mat-icon {
+              font-size: 0.8rem;
+              margin-right: 0.15rem;
+            }
+          }
+
+          .more-btn {
+            padding: 0.3rem;
+            
+            mat-icon {
+              font-size: 0.9rem;
+            }
+          }
+        }
+      }
+    }
+    
+    .empty-state {
+      .empty-card {
+        padding: 1.5rem 0.75rem;
+        
+        .empty-content {
+          .empty-icon {
+            font-size: 2.5rem;
+          }
+          
+          .empty-title {
+            font-size: 1.1rem;
+          }
+          
+          .empty-subtitle {
+            font-size: 0.85rem;
+          }
+          
+          .create-goal-btn {
+            padding: 0.6rem 1.2rem;
+            font-size: 0.85rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* Extra small devices (320px and below) */
+@media (max-width: 360px) {
+  .page-header .header-content {
+    padding: 0 0.5rem;
+    
+    .header-left .header-text .page-title {
+      font-size: 1.1rem;
+    }
+  }
+  
+  .filters-section .filters-card {
+    padding: 0.5rem;
+  }
+  
+  .goals-section .goals-grid .goal-card {
+    padding: 0.5rem;
   }
 } 

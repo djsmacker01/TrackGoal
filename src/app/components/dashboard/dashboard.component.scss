@@ -1129,39 +1129,185 @@
   }
 }
 
-// Responsive Design
+// Enhanced Mobile Responsive Design
+@media (max-width: 1024px) {
+  .dashboard-header .header-content {
+    padding: 0 1.5rem;
+    
+    .header-left .app-brand .app-title {
+      font-size: 1.5rem;
+    }
+    
+    .nav {
+      gap: 0.25rem;
+      
+      .nav-btn {
+        padding: 8px;
+      }
+    }
+  }
+  
+  .main-content {
+    padding: 1.5rem;
+  }
+  
+  .welcome-card {
+    padding: 2rem;
+    
+    .welcome-content .welcome-title {
+      font-size: 2.25rem;
+    }
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  
+  .goals-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
 @media (max-width: 768px) {
+  .dashboard-container {
+    padding-bottom: 80px; /* Space for mobile navigation */
+  }
+  
+  .dashboard-header {
+    padding: 0.75rem 0;
+    
+    .header-content {
+      padding: 0 1rem;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: stretch;
+      
+      .header-left {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        
+        .app-brand {
+          .brand-icon {
+            font-size: 1.75rem;
+          }
+          
+          .app-title {
+            font-size: 1.5rem;
+          }
+        }
+        
+        .app-subtitle {
+          display: none; /* Hide on mobile to save space */
+        }
+      }
+      
+      .nav {
+        justify-content: center;
+        gap: 1rem;
+        
+        .nav-btn {
+          padding: 12px;
+          border-radius: 12px;
+          background: rgba(255, 255, 255, 0.1);
+          backdrop-filter: blur(10px);
+          
+          &:hover {
+            background: rgba(255, 255, 255, 0.2);
+          }
+        }
+        
+        .user-avatar {
+          width: 36px;
+          height: 36px;
+          font-size: 1rem;
+        }
+      }
+    }
+  }
+
   .main-content {
     padding: 1rem;
   }
 
+  .welcome-section {
+    margin-bottom: 2rem;
+
   .welcome-card {
     flex-direction: column;
     text-align: center;
-    gap: 2rem;
+      gap: 1.5rem;
+      padding: 1.5rem;
 
+      .welcome-content {
     .welcome-title {
-      font-size: 2rem;
+          font-size: 1.75rem;
+          line-height: 1.3;
+        }
+
+        .welcome-subtitle {
+          font-size: 1rem;
+        }
+        
+        .motivation-badge {
+          padding: 0.5rem 1rem;
+          font-size: 0.85rem;
+        }
     }
 
     .welcome-illustration {
-      width: 150px;
-      height: 150px;
+        width: 120px;
+        height: 120px;
+        
+        .floating-elements .floating-icon {
+          font-size: 1.5rem;
+        }
+      }
     }
   }
 
+  .stats-section {
+    margin-bottom: 2rem;
+
   .stats-grid {
     grid-template-columns: 1fr;
+      gap: 1rem;
+      
+      .stat-card {
+        padding: 1.5rem;
+        
+        .stat-icon {
+          font-size: 2rem;
+        }
+        
+        .stat-content {
+          .stat-value {
+            font-size: 2rem;
+          }
+          
+          .stat-label {
+            font-size: 0.9rem;
+          }
+        }
+      }
+    }
   }
 
-  .goals-grid {
-    grid-template-columns: 1fr;
-  }
+  .goals-section {
+    margin-bottom: 2rem;
 
   .section-header {
     flex-direction: column;
     gap: 1rem;
-    align-items: flex-start;
+      align-items: stretch;
+      margin-bottom: 1.5rem;
+
+      .section-title {
+        font-size: 1.5rem;
+        text-align: center;
+      }
 
     .section-actions {
       flex-direction: column;
@@ -1172,28 +1318,548 @@
       .add-goal-btn {
         width: 100%;
         justify-content: center;
+          padding: 12px 16px;
+          font-size: 14px;
+        }
+      }
+    }
+    
+    .goals-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      
+      .goal-card {
+        padding: 1.5rem;
+        
+        .goal-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 1rem;
+          margin-bottom: 1rem;
+          
+          .goal-info {
+            .goal-title {
+              font-size: 1.1rem;
+            }
+            
+            .category-chip {
+              font-size: 0.7rem;
+              padding: 0.25rem 0.5rem;
+            }
+          }
+          
+          .goal-actions {
+            align-self: flex-end;
+            gap: 0.25rem;
+            
+            .action-btn {
+              padding: 8px;
+            }
+          }
+        }
+        
+        .goal-progress-section {
+          margin-bottom: 1rem;
+          
+          .progress-header {
+            .progress-label {
+              font-size: 0.8rem;
+            }
+            
+            .progress-percentage {
+              font-size: 0.9rem;
+            }
+          }
+        }
+        
+        .goal-milestone {
+          margin-bottom: 1rem;
+          
+          .milestone-preview {
+            padding: 0.75rem;
+            
+            .milestone-text {
+              font-size: 0.85rem;
+            }
+          }
+        }
+        
+        .milestones-section {
+          .milestones-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+          }
+          
+          .milestones-list {
+            gap: 0.5rem;
+            
+            .milestone-item {
+              padding: 0.5rem;
+              
+              .milestone-title {
+                font-size: 0.85rem;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .activity-section {
+    margin-bottom: 2rem;
+    
+    .section-header {
+    flex-direction: column;
+    gap: 1rem;
+      align-items: stretch;
+      margin-bottom: 1.5rem;
+      
+      .section-title {
+        font-size: 1.5rem;
+    text-align: center;
+  }
+
+      .view-all-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+    
+    .activity-card {
+    padding: 1.5rem;
+      
+      .activity-list {
+        gap: 0.75rem;
+        
+        .activity-item {
+          padding: 0.75rem;
+          
+          .activity-icon {
+            width: 40px;
+            height: 40px;
+            font-size: 1.25rem;
+          }
+          
+          .activity-content {
+            .activity-text {
+              font-size: 0.9rem;
+            }
+            
+            .activity-time {
+              font-size: 0.75rem;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  .recent-activity-section {
+    margin-bottom: 2rem;
+    
+    .section-header {
+      flex-direction: column;
+      gap: 1rem;
+      align-items: stretch;
+      margin-bottom: 1.5rem;
+      
+      .section-title {
+        font-size: 1.25rem;
+        text-align: center;
+      }
+      
+      .view-all-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+    
+    .activity-list {
+      gap: 0.75rem;
+      
+      .activity-item {
+        padding: 1rem;
+        
+        .activity-icon {
+          width: 40px;
+          height: 40px;
+          
+          mat-icon {
+            font-size: 1.25rem;
+          }
+        }
+        
+        .activity-content {
+          .activity-title {
+            font-size: 0.9rem;
+          }
+          
+          .activity-description {
+            font-size: 0.8rem;
+          }
+          
+          .activity-time {
+            font-size: 0.75rem;
+          }
+        }
+        
+        .activity-category {
+          .category-chip {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+          }
+        }
       }
     }
   }
 }
 
 @media (max-width: 480px) {
-  .dashboard-header .header-content {
-    padding: 0 1rem;
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
+  .dashboard-header {
+    padding: 0.5rem 0;
+    
+    .header-content {
+      padding: 0 0.75rem;
+      gap: 0.75rem;
+      
+      .header-left {
+        .app-brand {
+          .brand-icon {
+            font-size: 1.5rem;
+          }
+          
+          .app-title {
+            font-size: 1.25rem;
+          }
+        }
+      }
+      
+      .nav {
+        gap: 0.5rem;
+        
+        .nav-btn {
+          padding: 10px;
+          
+          mat-icon {
+            font-size: 1.25rem;
+          }
+        }
+        
+        .user-avatar {
+          width: 32px;
+          height: 32px;
+          font-size: 0.9rem;
+        }
+      }
+    }
   }
 
-  .welcome-card {
-    padding: 1.5rem;
+  .main-content {
+    padding: 0.75rem;
   }
+
+  .welcome-section {
+    margin-bottom: 1.5rem;
+    
+    .welcome-card {
+      padding: 1rem;
+      gap: 1rem;
+
+      .welcome-content {
+        .welcome-title {
+          font-size: 1.5rem;
+        }
+
+        .welcome-subtitle {
+          font-size: 0.9rem;
+        }
+        
+        .motivation-badge {
+          padding: 0.4rem 0.8rem;
+          font-size: 0.8rem;
+        }
+      }
+
+      .welcome-illustration {
+        width: 100px;
+        height: 100px;
+        
+        .floating-elements .floating-icon {
+          font-size: 1.25rem;
+        }
+      }
+    }
+  }
+
+  .stats-section {
+    margin-bottom: 1.5rem;
+    
+    .stats-grid {
+      gap: 0.75rem;
 
   .stat-card {
-    padding: 1.5rem;
+        padding: 1rem;
+        
+        .stat-icon {
+          font-size: 1.75rem;
+          width: 50px;
+          height: 50px;
+        }
+        
+        .stat-content {
+          .stat-value {
+            font-size: 1.75rem;
+          }
+          
+          .stat-label {
+            font-size: 0.8rem;
+          }
+        }
+      }
+    }
   }
 
+  .goals-section {
+    margin-bottom: 1.5rem;
+    
+    .section-header {
+      margin-bottom: 1rem;
+      
+      .section-title {
+        font-size: 1.25rem;
+      }
+      
+      .section-actions {
+        .view-all-btn,
+        .add-goal-btn {
+          padding: 10px 14px;
+          font-size: 13px;
+        }
+      }
+    }
+    
+    .goals-grid {
+      gap: 0.75rem;
+
   .goal-card {
-    padding: 1.5rem;
+        padding: 1rem;
+        
+        .goal-header {
+          gap: 0.75rem;
+          margin-bottom: 0.75rem;
+          
+          .goal-info {
+            .goal-title {
+              font-size: 1rem;
+            }
+            
+            .category-chip {
+              font-size: 0.65rem;
+              padding: 0.2rem 0.4rem;
+            }
+          }
+          
+          .goal-actions {
+            .action-btn {
+              padding: 6px;
+              
+              mat-icon {
+                font-size: 1rem;
+              }
+            }
+          }
+        }
+        
+        .goal-progress-section {
+          margin-bottom: 0.75rem;
+          
+          .progress-header {
+            .progress-label {
+              font-size: 0.75rem;
+            }
+            
+            .progress-percentage {
+              font-size: 0.8rem;
+            }
+          }
+        }
+        
+        .goal-milestone {
+          margin-bottom: 0.75rem;
+          
+          .milestone-preview {
+            padding: 0.5rem;
+            
+            .milestone-icon {
+              font-size: 1rem;
+            }
+            
+            .milestone-text {
+              font-size: 0.8rem;
+            }
+          }
+        }
+        
+        .milestones-section {
+          .milestones-header {
+            margin-bottom: 0.5rem;
+            
+            .milestones-title {
+              font-size: 0.9rem;
+            }
+            
+            .milestones-count {
+              font-size: 0.75rem;
+              padding: 0.2rem 0.5rem;
+            }
+          }
+          
+          .milestones-list {
+            gap: 0.4rem;
+            
+            .milestone-item {
+              padding: 0.4rem;
+              
+              .milestone-checkbox .checkbox-inner {
+                width: 18px;
+                height: 18px;
+              }
+              
+              .milestone-title {
+                font-size: 0.8rem;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .activity-section {
+    margin-bottom: 1.5rem;
+    
+    .section-header {
+      margin-bottom: 1rem;
+      
+      .section-title {
+        font-size: 1.25rem;
+      }
+    }
+    
+    .activity-card {
+      padding: 1rem;
+      
+      .activity-list {
+        gap: 0.5rem;
+        
+        .activity-item {
+          padding: 0.5rem;
+          
+          .activity-icon {
+            width: 36px;
+            height: 36px;
+            font-size: 1.1rem;
+          }
+          
+          .activity-content {
+            .activity-text {
+              font-size: 0.85rem;
+            }
+            
+            .activity-time {
+              font-size: 0.7rem;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  .recent-activity-section {
+    margin-bottom: 1.5rem;
+    
+    .section-header {
+      margin-bottom: 1rem;
+      
+      .section-title {
+        font-size: 1.1rem;
+      }
+    }
+    
+    .activity-list {
+      gap: 0.5rem;
+      
+      .activity-item {
+        padding: 0.75rem;
+        
+        .activity-icon {
+          width: 36px;
+          height: 36px;
+          
+          mat-icon {
+            font-size: 1.1rem;
+          }
+        }
+        
+        .activity-content {
+          .activity-title {
+            font-size: 0.85rem;
+          }
+          
+          .activity-description {
+            font-size: 0.75rem;
+          }
+          
+          .activity-time {
+            font-size: 0.7rem;
+          }
+        }
+        
+        .activity-category {
+          .category-chip {
+            font-size: 0.65rem;
+            padding: 0.15rem 0.4rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* Extra small devices (320px and below) */
+@media (max-width: 360px) {
+  .dashboard-header .header-content {
+    padding: 0 0.5rem;
+    
+    .header-left .app-brand .app-title {
+      font-size: 1.1rem;
+    }
+  }
+  
+  .main-content {
+    padding: 0.5rem;
+  }
+  
+  .welcome-card {
+    padding: 0.75rem;
+    
+    .welcome-content .welcome-title {
+      font-size: 1.25rem;
+    }
+  }
+  
+  .stat-card {
+    padding: 0.75rem;
+    
+    .stat-content .stat-value {
+      font-size: 1.5rem;
+    }
+  }
+  
+  .goal-card {
+    padding: 0.75rem;
   }
 } 
