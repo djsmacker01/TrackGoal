@@ -1,10 +1,11 @@
 .login-container {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   font-family: 'Inter', sans-serif;
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   
   &::before {
     content: '';
@@ -28,7 +29,7 @@
   align-items: center;
   justify-content: center;
   padding: 20px;
-  height: 100vh;
+  min-height: 100vh;
   overflow-y: auto;
   
   .form-content {
@@ -44,8 +45,7 @@
       0 8px 16px rgba(0, 0, 0, 0.05);
     position: relative;
     z-index: 1;
-    max-height: calc(100vh - 40px);
-    overflow-y: auto;
+    margin: 20px 0;
   }
 
   .form-header {
@@ -297,7 +297,7 @@
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   border-left: 1px solid rgba(255, 255, 255, 0.2);
-  height: 100vh;
+  min-height: 100vh;
   overflow-y: auto;
   
   .welcome-content {
@@ -435,17 +435,19 @@
 @media (max-width: 768px) {
   .login-container {
     padding-bottom: 80px; /* Space for mobile navigation */
+    flex-direction: column;
   }
   
   .form-section {
     padding: 10px;
-    min-height: 70vh;
+    min-height: auto;
+    flex: none;
     
     .form-content {
       padding: 20px 15px;
-      max-height: calc(100vh - 100px);
       border-radius: 16px;
-      margin: 0;
+      margin: 10px 0;
+      max-width: 100%;
     }
     
     .form-header {
@@ -562,8 +564,9 @@
   }
   
   .welcome-section {
-    min-height: 30vh;
+    min-height: auto;
     padding: 15px;
+    flex: none;
     
     .welcome-content {
       .welcome-icon {
@@ -608,12 +611,12 @@
 @media (max-width: 480px) {
   .form-section {
     padding: 8px;
-    min-height: 75vh;
+    min-height: auto;
     
     .form-content {
       padding: 16px 12px;
-      max-height: calc(100vh - 80px);
       border-radius: 12px;
+      margin: 8px 0;
     }
     
     .form-header {
@@ -727,7 +730,7 @@
   }
   
   .welcome-section {
-    min-height: 25vh;
+    min-height: auto;
     padding: 12px;
     
     .welcome-content {
@@ -771,12 +774,12 @@
 @media (max-width: 360px) {
   .form-section {
     padding: 6px;
-    min-height: 80vh;
+    min-height: auto;
     
     .form-content {
       padding: 14px 10px;
-      max-height: calc(100vh - 70px);
       border-radius: 10px;
+      margin: 6px 0;
     }
     
     .form-header {
@@ -888,7 +891,7 @@
   }
   
   .welcome-section {
-    min-height: 20vh;
+    min-height: auto;
     padding: 10px;
     
     .welcome-content {

@@ -72,6 +72,7 @@ export interface SupabaseSignUpData {
                      placeholder="Enter your email" 
                      autocomplete="email"
                      name="email"
+                     inputmode="email"
                      required>
               <mat-icon matSuffix>email</mat-icon>
               <mat-error *ngIf="signupForm.get('email')?.hasError('required')">
@@ -90,10 +91,12 @@ export interface SupabaseSignUpData {
                      placeholder="Create a strong password" 
                      autocomplete="new-password"
                      name="password"
+                     inputmode="text"
                      required>
               <button mat-icon-button matSuffix type="button" 
                       (click)="togglePasswordVisibility()" 
-                      [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
+                      [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+                      class="touch-target">
                 <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
               </button>
               <mat-error *ngIf="signupForm.get('password')?.hasError('required')">
@@ -165,7 +168,7 @@ export interface SupabaseSignUpData {
             <!-- Submit Button -->
             <button type="submit" 
                     mat-raised-button 
-                    class="signup-btn" 
+                    class="signup-btn touch-target" 
                     [disabled]="signupForm.invalid || isSubmitting">
               <mat-icon *ngIf="!isSubmitting">person_add</mat-icon>
               <mat-icon *ngIf="isSubmitting" class="spinning">refresh</mat-icon>
@@ -181,11 +184,11 @@ export interface SupabaseSignUpData {
 
             <!-- Social Login Buttons -->
             <div class="social-login">
-              <button type="button" mat-outlined-button class="social-btn google-btn" (click)="signUpWithGoogle()">
+              <button type="button" mat-outlined-button class="social-btn google-btn touch-target" (click)="signUpWithGoogle()">
                 <mat-icon>google</mat-icon>
                 Google
               </button>
-              <button type="button" mat-outlined-button class="social-btn github-btn" (click)="signUpWithGitHub()">
+              <button type="button" mat-outlined-button class="social-btn github-btn touch-target" (click)="signUpWithGitHub()">
                 <mat-icon>code</mat-icon>
                 GitHub
               </button>
@@ -194,7 +197,7 @@ export interface SupabaseSignUpData {
             <!-- Sign In Link -->
             <div class="signin-link">
               <p>Already have an account? 
-                <a routerLink="/login" class="link">Sign In</a>
+                <a routerLink="/login" class="link touch-target">Sign In</a>
               </p>
             </div>
           </form>
@@ -245,7 +248,7 @@ export class SignupComponent implements OnInit {
     private snackBar: MatSnackBar,
     private authService: AuthService,
     private notificationService: NotificationService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.initForm();
@@ -346,11 +349,11 @@ export class SignupComponent implements OnInit {
   onSubmit() {
     if (this.signupForm.valid) {
       this.isSubmitting = true;
-      
+
       const formData: SignUpData = this.signupForm.value;
-      
+
       console.log('Starting signup process for:', formData.email);
-      
+
       // Prepare metadata for user profile
       const metadata: any = {};
       if (formData.fullName) {
@@ -364,9 +367,9 @@ export class SignupComponent implements OnInit {
           }
         }
       }
-      
+
       console.log('Signup metadata:', metadata);
-      
+
       // Call AuthService signup with metadata
       this.authService.signUp(formData.email, formData.password, metadata)
         .then(result => {
@@ -377,10 +380,10 @@ export class SignupComponent implements OnInit {
             this.router.navigate(['/']);
           } else {
             console.log('Signup failed:', result.error);
-            
+
             // Provide specific error messages based on the error type
             let errorMessage = 'Failed to create account. Please try again.';
-            
+
             if (result.error?.message?.includes('confirmation email') || result.error?.message?.includes('500')) {
               errorMessage = 'Email confirmation service is temporarily unavailable. Please try again later or contact support.';
             } else if (result.error?.message?.includes('already registered')) {
@@ -390,10 +393,10 @@ export class SignupComponent implements OnInit {
             } else if (result.error?.message) {
               errorMessage = result.error.message;
             }
-            
+
             this.notificationService.error(
-              'Signup Failed', 
-              errorMessage, 
+              'Signup Failed',
+              errorMessage,
               5000
             );
           }
@@ -401,8 +404,8 @@ export class SignupComponent implements OnInit {
         .catch(error => {
           console.error('Signup error:', error);
           this.notificationService.error(
-            'Signup Failed', 
-            'An unexpected error occurred. Please try again.', 
+            'Signup Failed',
+            'An unexpected error occurred. Please try again.',
             5000
           );
         })
